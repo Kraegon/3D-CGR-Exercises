@@ -21,7 +21,6 @@ void onDisplay(){
 	glutSwapBuffers();
 }
 
-
 int main(int argc, char * argv[])
 {
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);

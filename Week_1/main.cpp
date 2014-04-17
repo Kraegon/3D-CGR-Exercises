@@ -28,31 +28,32 @@ void onDisplay(){
 
 	glRotatef(rotation,0,0,1);
 	glBegin(GL_QUADS);
+    glColor3f(1.0f,0.0f,0.0f);
 		glVertex3f(0,0,0);
 		glVertex3f(0,1,0);
 		glVertex3f(1,1,0);
 		glVertex3f(1,0,0);
-
+    glColor3f(0.0f,1.0f,0.0f);
 		glVertex3f(0,0,1);
 		glVertex3f(0,1,1);
 		glVertex3f(1,1,1);
 		glVertex3f(1,0,1);
-
+    glColor3f(0.0f,0.0f,1.0f);
 		glVertex3f(0,0,0);
 		glVertex3f(0,0,1);
 		glVertex3f(0,1,1);
 		glVertex3f(0,1,0);
-
+    glColor3f(1.0f,1.0f,0.0f);
 		glVertex3f(1,0,0);
 		glVertex3f(1,0,1);
 		glVertex3f(1,1,1);
 		glVertex3f(1,1,0);
-
+    glColor3f(1.0f,0.0f,1.0f);
 		glVertex3f(0,0,0);
 		glVertex3f(0,0,1);
 		glVertex3f(1,0,1);
 		glVertex3f(1,0,0);
-
+    glColor3f(1.0f,1.0f,1.0f);
 		glVertex3f(0,1,0);
 		glVertex3f(0,1,1);
 		glVertex3f(1,1,1);
@@ -77,6 +78,7 @@ void Reshape(GLint width, GLint height)
 
 void InitGraphics(void)
 {
+    glEnable(GL_DEPTH_TEST);
 }
 
 void MouseButton(int button, int state, int x, int y)
@@ -95,7 +97,7 @@ void IdleFunc(void)
 
 void Keyboard(unsigned char key, int x, int y)
 {
-	printf("%d\n", key);
+	printf("Key %d pressed!\n", key);
 	switch (key)
 	{
         case 27:             // ESCAPE key
@@ -119,10 +121,12 @@ void Keyboard(unsigned char key, int x, int y)
 
 int main(int argc, char * argv[])
 {
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
     glutInit(&argc, argv);
-    glutCreateWindow("Hello Guus & Julian");	
+    glutCreateWindow("Hello Guus & Julian");
+	printf("Programme started!");
+    InitGraphics();
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
 	glutKeyboardFunc (Keyboard);

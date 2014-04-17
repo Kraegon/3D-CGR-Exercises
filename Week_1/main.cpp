@@ -21,9 +21,9 @@ float rotation = 0.0f;
 float eyeposVer = 0.0f;
 float eyeposHor = 0.0f;
 
-void gfxDrawCube(int posX, int posY, int posZ, int angle){
+void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
 	glPushMatrix();
-    glTranslatef(0.5+posX,0.5+posY,0.5+posZ);
+    glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
     switch(angle){
     	case 1:
 			glRotatef(rotation,1,0,0);
@@ -35,44 +35,44 @@ void gfxDrawCube(int posX, int posY, int posZ, int angle){
 			glRotatef(rotation,0,0,1);
     		break;
     }
-	glTranslatef(-0.5-posX,-0.5-posY,-0.5-posZ);
+	glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
     
 	glBegin(GL_QUADS);
 		glColor3f(1,1,0);
 		glVertex3f(posX,posY,posZ);
-		glVertex3f(posX,posY+1,posZ);
-		glVertex3f(posX+1,posY+1,posZ);
-		glVertex3f(posX+1,posY,posZ);
+		glVertex3f(posX,posY+size,posZ);
+		glVertex3f(posX+size,posY+size,posZ);
+		glVertex3f(posX+size,posY,posZ);
 		
 		glColor3f(0,1,0);
-		glVertex3f(posX,posY,posZ+1);
-		glVertex3f(posX,posY+1,posZ+1);
-		glVertex3f(posX+1,posY+1,posZ+1);
-		glVertex3f(posX+1,posY,posZ+1);
+		glVertex3f(posX,posY,posZ+size);
+		glVertex3f(posX,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ+size);
+		glVertex3f(posX+size,posY,posZ+size);
 
 		glColor3f(0,0,1);
 		glVertex3f(posX,posY,posZ);
-		glVertex3f(posX,posY,posZ+1);
-		glVertex3f(posX,posY+1,posZ+1);
-		glVertex3f(posX,posY+1,posZ);
+		glVertex3f(posX,posY,posZ+size);
+		glVertex3f(posX,posY+size,posZ+size);
+		glVertex3f(posX,posY+size,posZ);
 
 		glColor3f(1,0,0);		
-		glVertex3f(posX+1,posY,posZ);
-		glVertex3f(posX+1,posY,posZ+1);
-		glVertex3f(posX+1,posY+1,posZ+1);
-		glVertex3f(posX+1,posY+1,posZ);
+		glVertex3f(posX+size,posY,posZ);
+		glVertex3f(posX+size,posY,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ);
 
 		glColor3f(0,1,1);
 		glVertex3f(posX,posY,posZ);
-		glVertex3f(posX,posY,posZ+1);
-		glVertex3f(posX+1,posY,posZ+1);
-		glVertex3f(posX+1,posY,posZ);
+		glVertex3f(posX,posY,posZ+size);
+		glVertex3f(posX+size,posY,posZ+size);
+		glVertex3f(posX+size,posY,posZ);
 
 		glColor3f(1,1,1);
-		glVertex3f(posX,posY+1,posZ);
-		glVertex3f(posX,posY+1,posZ+1);
-		glVertex3f(posX+1,posY+1,posZ+1);
-		glVertex3f(posX+1,posY+1,posZ);
+		glVertex3f(posX,posY+size,posZ);
+		glVertex3f(posX,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ);
 	glEnd();
 	glPopMatrix();
 }
@@ -107,7 +107,6 @@ void MouseMotion(int x, int y)
 void IdleFunc(void)
 {
 	rotation++;
-	//rotation%=360.0f;
     glutPostRedisplay();
 }
 
@@ -145,11 +144,11 @@ void onDisplay(){
 			      );
 
     //CUBE_A======================== 
-	gfxDrawCube(-2,0,0,X_AXIS_ROTATION);
+	gfxDrawCube(-2,0,0,1,X_AXIS_ROTATION);
     //CUBE_B========================
-    gfxDrawCube(0,0,0,Y_AXIS_ROTATION);
+    gfxDrawCube(0,0,0,1,Y_AXIS_ROTATION);
     //CUBE_C========================
-    gfxDrawCube(2,0,0,Z_AXIS_ROTATION);
+    gfxDrawCube(2,0,0,1,Z_AXIS_ROTATION);
 
 	glutSwapBuffers();
 }

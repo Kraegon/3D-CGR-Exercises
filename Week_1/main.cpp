@@ -12,7 +12,7 @@
 #endif
 #include <iostream>
 
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
     
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);

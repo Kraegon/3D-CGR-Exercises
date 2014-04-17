@@ -87,6 +87,7 @@ void Reshape(GLint width, GLint height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(90,width/height,0.1,200);
+    glViewport(0, 0, width, height);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -130,6 +131,10 @@ void Keyboard(unsigned char key, int x, int y)
        	case 115:			 //s
        		eyeposVer-=0.1f;
 			break;
+        case 6:              //Control + f
+            glutFullScreen();
+            break;
+            
 	}
 }
 
@@ -138,19 +143,31 @@ void onDisplay(){
 	glLoadIdentity();
 
 	         gluLookAt(
-		eyeposHor,eyeposVer,2, 	
+		eyeposHor,eyeposVer,2,
 			 0.5,0.5,0.5, 	
 			    0,1,0
 			      );
 
     //CUBE_A======================== 
 	gfxDrawCube(-2,0,0,1,X_AXIS_ROTATION);
+    
     //CUBE_B========================
     gfxDrawCube(0,0,0,1,Y_AXIS_ROTATION);
+    
     //CUBE_C========================
     gfxDrawCube(2,0,0,1,Z_AXIS_ROTATION);
-
+    
+    glLoadIdentity();
+    glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(5, 5);
+    glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
+    glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+    glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+    glEnd();
+    
 	glutSwapBuffers();
+    
 }
 
 int main(int argc, char * argv[])

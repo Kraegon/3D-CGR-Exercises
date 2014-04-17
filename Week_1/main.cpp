@@ -19,36 +19,41 @@ float eyeposHor = 0.0f;
 
 void gfxDrawCube(int posX, int posY, int posZ){
 	glBegin(GL_QUADS);
-    glColor3f(1.0f,0.0f,0.0f);
-		glVertex3f(0,0,0);
-		glVertex3f(0,1,0);
-		glVertex3f(1,1,0);
-		glVertex3f(1,0,0);
-    glColor3f(0.0f,1.0f,0.0f);
-		glVertex3f(0,0,1);
-		glVertex3f(0,1,1);
-		glVertex3f(1,1,1);
-		glVertex3f(1,0,1);
-    glColor3f(0.0f,0.0f,1.0f);
-		glVertex3f(0,0,0);
-		glVertex3f(0,0,1);
-		glVertex3f(0,1,1);
-		glVertex3f(0,1,0);
-    glColor3f(1.0f,1.0f,0.0f);
-		glVertex3f(1,0,0);
-		glVertex3f(1,0,1);
-		glVertex3f(1,1,1);
-		glVertex3f(1,1,0);
-    glColor3f(1.0f,0.0f,1.0f);
-		glVertex3f(0,0,0);
-		glVertex3f(0,0,1);
-		glVertex3f(1,0,1);
-		glVertex3f(1,0,0);
-    glColor3f(1.0f,1.0f,1.0f);
-		glVertex3f(0,1,0);
-		glVertex3f(0,1,1);
-		glVertex3f(1,1,1);
-		glVertex3f(1,1,0);
+		glColor3f(1,1,0);
+		glVertex3f(posX,posY,posZ);
+		glVertex3f(posX,posY+1,posZ);
+		glVertex3f(posX+1,posY+1,posZ);
+		glVertex3f(posX+1,posY,posZ);
+		
+		glColor3f(0,1,0);
+		glVertex3f(posX,posY,posZ+1);
+		glVertex3f(posX,posY+1,posZ+1);
+		glVertex3f(posX+1,posY+1,posZ+1);
+		glVertex3f(posX+1,posY,posZ+1);
+
+		glColor3f(0,0,1);
+		glVertex3f(posX,posY,posZ);
+		glVertex3f(posX,posY,posZ+1);
+		glVertex3f(posX,posY+1,posZ+1);
+		glVertex3f(posX,posY+1,posZ);
+
+		glColor3f(1,0,0);		
+		glVertex3f(posX+1,posY,posZ);
+		glVertex3f(posX+1,posY,posZ+1);
+		glVertex3f(posX+1,posY+1,posZ+1);
+		glVertex3f(posX+1,posY+1,posZ);
+
+		glColor3f(0,1,1);
+		glVertex3f(posX,posY,posZ);
+		glVertex3f(posX,posY,posZ+1);
+		glVertex3f(posX+1,posY,posZ+1);
+		glVertex3f(posX+1,posY,posZ);
+
+		glColor3f(1,1,1);
+		glVertex3f(posX,posY+1,posZ);
+		glVertex3f(posX,posY+1,posZ+1);
+		glVertex3f(posX+1,posY+1,posZ+1);
+		glVertex3f(posX+1,posY+1,posZ);
 	glEnd();
 }
 
@@ -67,7 +72,7 @@ void Reshape(GLint width, GLint height)
 
 void InitGraphics(void)
 {
-    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void MouseButton(int button, int state, int x, int y)
@@ -117,14 +122,31 @@ void onDisplay(){
 		eyeposHor,eyeposVer,2, 	
 			 0.5,0.5,0.5, 	
 			    0,1,0
-			      );	
-
-	glTranslatef(0.5,0.5,0.5);
+			      );
+	glPushMatrix();
+    glTranslatef(0.5,0.5,0.5);
+	glRotatef(rotation,1,0,0);
+	glTranslatef(-0.5,-0.5,-0.5);
+    
+    
+	gfxDrawCube(-2,0,0);
+    glPopMatrix();
+    //============================
+    glPushMatrix();
+    glTranslatef(0.5,0.5,0.5);
 	glRotatef(rotation,0,1,0);
 	glTranslatef(-0.5,-0.5,-0.5);
-	
-	gfxDrawCube(0,0,0);
-
+    
+    gfxDrawCube(0,0,0);
+    glPopMatrix();
+    //============================
+    glPushMatrix();
+    glTranslatef(2.5,0.5,0.5);
+	glRotatef(rotation,0,0,1);
+	glTranslatef(-2.5,-0.5,-0.5);
+    
+    gfxDrawCube(2,0,0);
+    glPopMatrix();
 	glutSwapBuffers();
 }
 

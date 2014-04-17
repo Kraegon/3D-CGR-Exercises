@@ -20,6 +20,8 @@
 float rotation = 0.0f;
 float eyeposVer = 0.0f;
 float eyeposHor = 0.0f;
+bool rotating = true;
+bool fullScreen = false;
 
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
 	glPushMatrix();
@@ -107,7 +109,9 @@ void MouseMotion(int x, int y)
 
 void IdleFunc(void)
 {
-	rotation++;
+    if (rotating) {
+        rotation++;
+    }
     glutPostRedisplay();
 }
 
@@ -132,9 +136,20 @@ void Keyboard(unsigned char key, int x, int y)
        		eyeposVer-=0.1f;
 			break;
         case 6:              //Control + f
-            glutFullScreen();
+            if (fullScreen) {
+                glutReshapeWindow(800, 600);        /* Restore to window */
+                glutPositionWindow(0,0);
+                fullScreen = !fullScreen;
+            }
+            else
+            {
+                glutFullScreen();                       /* FullScreen glory */
+                fullScreen = !fullScreen;
+            }
             break;
-            
+        case 112:           //p
+            rotating = !rotating;
+            break;
 	}
 }
 

@@ -13,11 +13,30 @@
 #include <iostream>
 #include <stdio.h>
 
+#define X_AXIS_ROTATION 1
+#define Y_AXIS_ROTATION 2
+#define Z_AXIS_ROTATION 3
+
 float rotation = 0.0f;
 float eyeposVer = 0.0f;
 float eyeposHor = 0.0f;
 
-void gfxDrawCube(int posX, int posY, int posZ){
+void gfxDrawCube(int posX, int posY, int posZ, int angle){
+	glPushMatrix();
+    glTranslatef(0.5+posX,0.5+posY,0.5+posZ);
+    switch(angle){
+    	case 1:
+			glRotatef(rotation,1,0,0);
+    		break;
+    	case 2:
+			glRotatef(rotation,0,1,0);
+    		break;
+    	case 3:
+			glRotatef(rotation,0,0,1);
+    		break;
+    }
+	glTranslatef(-0.5-posX,-0.5-posY,-0.5-posZ);
+    
 	glBegin(GL_QUADS);
 		glColor3f(1,1,0);
 		glVertex3f(posX,posY,posZ);
@@ -55,6 +74,7 @@ void gfxDrawCube(int posX, int posY, int posZ){
 		glVertex3f(posX+1,posY+1,posZ+1);
 		glVertex3f(posX+1,posY+1,posZ);
 	glEnd();
+	glPopMatrix();
 }
 
 void Display(void)
@@ -123,30 +143,14 @@ void onDisplay(){
 			 0.5,0.5,0.5, 	
 			    0,1,0
 			      );
-	glPushMatrix();
-    glTranslatef(0.5,0.5,0.5);
-	glRotatef(rotation,1,0,0);
-	glTranslatef(-0.5,-0.5,-0.5);
-    
-    
-	gfxDrawCube(-2,0,0);
-    glPopMatrix();
-    //============================
-    glPushMatrix();
-    glTranslatef(0.5,0.5,0.5);
-	glRotatef(rotation,0,1,0);
-	glTranslatef(-0.5,-0.5,-0.5);
-    
-    gfxDrawCube(0,0,0);
-    glPopMatrix();
-    //============================
-    glPushMatrix();
-    glTranslatef(2.5,0.5,0.5);
-	glRotatef(rotation,0,0,1);
-	glTranslatef(-2.5,-0.5,-0.5);
-    
-    gfxDrawCube(2,0,0);
-    glPopMatrix();
+
+    //CUBE_A======================== 
+	gfxDrawCube(-2,0,0,X_AXIS_ROTATION);
+    //CUBE_B========================
+    gfxDrawCube(0,0,0,Y_AXIS_ROTATION);
+    //CUBE_C========================
+    gfxDrawCube(2,0,0,Z_AXIS_ROTATION);
+
 	glutSwapBuffers();
 }
 

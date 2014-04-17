@@ -21,12 +21,49 @@ void onDisplay(){
 	glutSwapBuffers();
 }
 
+void Display(void)
+{
+	glutSwapBuffers();
+}
+
+void Reshape(GLint width, GLint height)
+{
+}
+
+void InitGraphics(void)
+{
+}
+
+void MouseButton(int button, int state, int x, int y)
+{
+}
+
+void MouseMotion(int x, int y)
+{
+}
+
+void IdleFunc(void)
+{
+    glutPostRedisplay();
+}
+
+void Keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+        case 27:             // ESCAPE key
+            exit (0);
+            break;
+	}
+}
+
+
 int main(int argc, char * argv[])
 {
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(800, 600);
     glutInit(&argc, argv);
-    glutCreateWindow("Hello Guus");
+    glutCreateWindow("Hello Guus & Julian");
  	glutDisplayFunc(onDisplay);
     glutMainLoop();
 }

@@ -14,18 +14,19 @@
 #include <stdio.h>
 
 float rotation = 0.0f;
-float eyepos = 0.0f;
+float eyeposVer = 0.0f;
+float eyeposHor = 0.0f;
+
 
 void onDisplay(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	gluLookAt(0,0,10, 	//Eye
+	gluLookAt(eyeposHor,eyeposVer,2, 	//Eye
 			  0,0,0, 	//Center
-			  0,1,0);	//Up 
+			  0,1,0);	//Up
 
-	glRotatef(rotation,0,1,0);
-
+	glRotatef(rotation,0,0,1);
 	glBegin(GL_QUADS);
 		glVertex3f(0,0,0);
 		glVertex3f(0,1,0);
@@ -37,6 +38,25 @@ void onDisplay(){
 		glVertex3f(1,1,1);
 		glVertex3f(1,0,1);
 
+		glVertex3f(0,0,0);
+		glVertex3f(0,0,1);
+		glVertex3f(0,1,1);
+		glVertex3f(0,1,0);
+
+		glVertex3f(1,0,0);
+		glVertex3f(1,0,1);
+		glVertex3f(1,1,1);
+		glVertex3f(1,1,0);
+
+		glVertex3f(0,0,0);
+		glVertex3f(0,0,1);
+		glVertex3f(1,0,1);
+		glVertex3f(1,0,0);
+
+		glVertex3f(0,1,0);
+		glVertex3f(0,1,1);
+		glVertex3f(1,1,1);
+		glVertex3f(1,1,0);
 	glEnd();
 
 	glutSwapBuffers();
@@ -81,12 +101,18 @@ void Keyboard(unsigned char key, int x, int y)
         case 27:             // ESCAPE key
             exit (0);
             break;
-       	case 97:
-        	eyepos+=0.1f;
+       	case 97:			 //a 
+        	eyeposHor+=0.1f;
        		break;
-       	case 100:
-        	eyepos-=0.1f;
+       	case 100:			 //d 
+        	eyeposHor-=0.1f;
        		break;
+       	case 119:			 //w
+       		eyeposVer+=0.1f;
+       		break;
+       	case 115:			 //s
+       		eyeposVer-=0.1f;
+			break;
 	}
 }
 

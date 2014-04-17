@@ -20,6 +20,10 @@
 float rotation = 0.0f;
 float eyeposVer = 0.0f;
 float eyeposHor = 0.0f;
+float eyeposDepth = 2.0f;
+float cameraCenterX = 0.5f;
+float cameraCenterY = 0.5f;
+float cameraCenterZ = 0.5f;
 bool rotating = true;
 bool fullScreen = false;
 
@@ -123,21 +127,27 @@ void Keyboard(unsigned char key, int x, int y)
         case 27:             // ESCAPE key
             exit (0);
             break;
-       	case 97:			 //a 
-        	eyeposHor+=0.1f;
+       	case 97:			 //a
+        	eyeposHor+=0.1f;        /* Move left */
        		break;
        	case 100:			 //d 
-        	eyeposHor-=0.1f;
+        	eyeposHor-=0.1f;        /* Move right */
        		break;
        	case 119:			 //w
-       		eyeposVer+=0.1f;
+       		eyeposVer+=0.1f;        /* Move up */
        		break;
        	case 115:			 //s
-       		eyeposVer-=0.1f;
+       		eyeposVer-=0.1f;        /* Move down */
 			break;
+        case 113:            //q
+            eyeposDepth+=0.1f;      /* Zoom in */
+            break;
+        case 101:           //e
+            eyeposDepth-=0.1f;      /* Zoom out */
+            break;
         case 6:              //Control + f
             if (fullScreen) {
-                glutReshapeWindow(800, 600);        /* Restore to window */
+                glutReshapeWindow(800, 600);            /* Restore to window */
                 glutPositionWindow(0,0);
                 fullScreen = !fullScreen;
             }
@@ -158,9 +168,9 @@ void onDisplay(){
 	glLoadIdentity();
 
 	         gluLookAt(
-		eyeposHor,eyeposVer,2,
-			 0.5,0.5,0.5, 	
-			    0,1,0
+		eyeposHor,eyeposVer,eyeposDepth,
+			 cameraCenterX,cameraCenterY,cameraCenterZ,
+			    0,0.001,0
 			      );
 
     //CUBE_A======================== 
@@ -191,7 +201,7 @@ int main(int argc, char * argv[])
     glutInitWindowSize(800, 600);
     glutInit(&argc, argv);
     glutCreateWindow("Hello Guus & Julian");
-	printf("Programme started!");
+	printf("Program started!");
     InitGraphics();
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);

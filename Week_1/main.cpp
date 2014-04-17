@@ -11,14 +11,24 @@
 #include <GL/glut.h>
 #endif
 #include <iostream>
+#include <stdio.h>
 
-int main(int argc, const char * argv[])
+void onDisplay(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+
+	printf("test\n");
+	glutSwapBuffers();
+}
+
+
+int main(int argc, char * argv[])
 {
-    
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(800, 600);
     glutInit(&argc, argv);
-    glutCreateWindow("Hello Julian");
+    glutCreateWindow("Hello Guus");
+ 	glutDisplayFunc(onDisplay);
     glutMainLoop();
 }
 

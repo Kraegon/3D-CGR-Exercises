@@ -13,8 +13,10 @@
 #endif
 #ifdef __APPLE__
 #include <GLUT/glut.h>
-#else
+#elif _WIN32
 #include <glut.h>
+#else
+#include <GL/glut.h>
 #endif
 
 #include <iostream>

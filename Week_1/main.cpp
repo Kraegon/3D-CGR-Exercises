@@ -5,11 +5,18 @@
 //  Created by Guus Beckett and Julian West on 17-04-14.
 //  Copyright (c) 2014 reupload.nl. All rights reserved.
 //
+#ifdef _WIN32
+#include <stdlib.h> 
+#include <windows.h>
+#else
+#include <unistd.h> //Test compatibility of unistd.h's sleep with Apple systems
+#endif
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+#include <glut.h>
 #endif
+
 #include <iostream>
 #include <stdio.h>
 
@@ -192,7 +199,11 @@ void onDisplay(){
     glEnd();
     
 	glutSwapBuffers();
-    
+#ifdef _WIN32
+	Sleep(10);
+#else
+	usleep(10);
+#endif
 }
 
 int main(int argc, char * argv[])

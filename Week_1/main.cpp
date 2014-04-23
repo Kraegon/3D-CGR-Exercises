@@ -21,18 +21,20 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 #define X_AXIS_ROTATION 1
 #define Y_AXIS_ROTATION 2
 #define Z_AXIS_ROTATION 3
 
+#define AsRadian(x) (x*(M_PI/180))
+
 float rotation = 0.0f;
-float eyeposVer = 0.0f;
-float eyeposHor = 0.0f;
-float eyeposDepth = 2.0f;
-float cameraCenterX = 0.5f;
-float cameraCenterY = 0.5f;
-float cameraCenterZ = 0.5f;
+float eyeposVer = 1.2f; //In vertical plane: y
+float eyeposHor = 0.0f; //In horizontal plane: x and z
+float cameraCenterX = 0.0f;
+float cameraCenterY = 0.0f;
+float cameraCenterZ = 0.0f;
 bool rotating = true;
 bool fullScreen = false;
 
@@ -130,29 +132,41 @@ void IdleFunc(void)
 
 void Keyboard(unsigned char key, int x, int y)
 {
-	printf("Key %d pressed!\n", key);
 	switch (key)
 	{
         case 27:             // ESCAPE key
             exit (0);
             break;
        	case 97:			 //a
-        	eyeposHor+=0.1f;        /* Move left */
+        	//cameraCenterX-=0.1f;       /* Move center left, camera will stay in place */ 
+       		//Kinda broke it. Sorry Guus. Temporary functions the same as q & e
+       		eyeposHor+=1.0f;	
+        	if(eyeposHor==180.0f)
+       			eyeposHor = 180.0f; /* Turn left */
        		break;
        	case 100:			 //d 
-        	eyeposHor-=0.1f;        /* Move right */
+        	//cameraCenterX+=0.1f;		/* Move center right, camera will stay in place */   
+        	eyeposHor-=1.0f;	
+        	if(eyeposHor==180.0f)
+       			eyeposHor = -180.0f; /* Turn right */
        		break;
        	case 119:			 //w
-       		eyeposVer+=0.1f;        /* Move up */
+       		eyeposVer-=0.1f;        /* Move up */
+       		if(eyeposVer <= 0.1)
+       			eyeposVer = 0.1; //Stops invert
        		break;
        	case 115:			 //s
-       		eyeposVer-=0.1f;        /* Move down */
+       		eyeposVer+=0.1f;        /* Move down */
 			break;
         case 113:            //q
-            eyeposDepth+=0.1f;      /* Zoom in */
+            eyeposHor-=1.0f;	
+        	if(eyeposHor==180.0f)
+       			eyeposHor = -180.0f;     /* Turn left */
             break;
         case 101:           //e
-            eyeposDepth-=0.1f;      /* Zoom out */
+            eyeposHor+=1.0f;	
+        	if(eyeposHor==180.0f)
+       			eyeposHor = 180.0f;       /* Turn right */
             break;
         case 6:              //Control + f
             if (fullScreen) {
@@ -176,20 +190,21 @@ void onDisplay(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	         gluLookAt(
-		eyeposHor,eyeposVer,eyeposDepth,
-			 cameraCenterX,cameraCenterY,cameraCenterZ,
-			    0,0.001,0
-			      );
+					      			gluLookAt(
+	eyeposVer*cos(AsRadian(eyeposHor)),eyeposVer,eyeposVer*sin(AsRadian(eyeposHor)),   //Assumes camera center == 0
+		    	     cameraCenterX,cameraCenterY,cameraCenterZ,
+						              0,1,0
+						                );
 
+	                       //Lookat art ^
     //CUBE_A======================== 
-	gfxDrawCube(-2,0,0,1,X_AXIS_ROTATION);
+	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
     
     //CUBE_B========================
-    gfxDrawCube(0,0,0,1,Y_AXIS_ROTATION);
+    gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
     
     //CUBE_C========================
-    gfxDrawCube(2,0,0,1,Z_AXIS_ROTATION);
+    gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
     
     glLoadIdentity();
     glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);

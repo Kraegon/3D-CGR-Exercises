@@ -227,9 +227,9 @@ void onDisplay(){
 //Meaning: redefined sleep 
 void rSleep(int millisec){
 #ifdef _WIN32
-  Sleep(10);
+  Sleep(millisec);
 #else
-  usleep(10);
+  usleep(millisec);
 #endif
 }
 
@@ -242,25 +242,26 @@ void IdleFunc(void)
     }
     if(keys[GLUT_KEY_RIGHT])
     {
-      eyeposHor-=1.0f;  
+      eyeposHor-=ticks/10;  
       if(eyeposHor==-180.0f)
         eyeposHor = 180.0f;
     }
     if(keys[GLUT_KEY_LEFT])
     {
-      eyeposHor+=1.0f;  
+      eyeposHor+=ticks/10;  
       if(eyeposHor==180.0f)
         eyeposHor = -180.0f;
     }
     if(keys[GLUT_KEY_UP]){
-      eyeposVer-=0.1f;            
+      eyeposVer-=ticks/100;            
       if(eyeposVer <= 0.1)
         eyeposVer = 0.1;
     }
     if(keys[GLUT_KEY_DOWN]){
-      eyeposVer+=0.1f;
+      eyeposVer+=ticks/100;
     }
     lastTick = timeNow;
+    rSleep(ticks/10);
     glutPostRedisplay();
 }
 

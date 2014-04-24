@@ -2,8 +2,6 @@
 //  stb_image.h
 //  OpdrachtenWeek1
 //
-//  Created by Guus Beckett on 24-04-14.
-//  Copyright (c) 2014 reupload.nl. All rights reserved.
 //
 //
 // Limitations:

@@ -143,33 +143,36 @@ void Keyboard(unsigned char key, int x, int y)
         	//cameraCenterX-=0.1f;       /* Move center left, camera will stay in place */ 
        		//Kinda broke it. Sorry Guus. Temporary functions the same as q & e
        		eyeposHor+=1.0f;	
-        	if(eyeposHor==180.0f)
-       			eyeposHor = 180.0f; /* Turn left */
+        	if(eyeposHor>=180.0f)
+       			eyeposHor = -180.0f; /* Turn left */
+            printf("eyeposHor: %f\n",eyeposHor);
        		break;
        	case 100:			 //d 
         	//cameraCenterX+=0.1f;		/* Move center right, camera will stay in place */   
-        	eyeposHor-=1.0f;	
-        	if(eyeposHor==180.0f)
-       			eyeposHor = -180.0f; /* Turn right */
+            eyeposHor-=1.0f;
+        	if(eyeposHor<=-180.0f)
+       			eyeposHor = 180.0f;     /* Turn left */
+            printf("eyeposHor: %f\n",eyeposHor);
        		break;
        	case 119:			 //w
-       		eyeposVer-=0.1f;        /* Move up */
+       		eyeposVer-=0.1f;            /* Move up */
        		if(eyeposVer <= 0.1)
-       			eyeposVer = 0.1; //Stops invert
+       			eyeposVer = 0.1;        //Stops invert
        		break;
        	case 115:			 //s
-       		eyeposVer+=0.1f;        /* Move down */
+       		eyeposVer+=0.1f;            /* Move down */
 			break;
         case 113:            //q
             eyeposHor-=1.0f;	
-        	if(eyeposHor==180.0f)
-       			eyeposHor = -180.0f;     /* Turn left */
+        	if(eyeposHor<=-180.0f)
+       			eyeposHor = 180.0f;     /* Turn left */
             break;
         case 101:           //e
-            eyeposHor+=1.0f;	
-        	if(eyeposHor==180.0f)
-       			eyeposHor = 180.0f;       /* Turn right */
-            break;
+       		eyeposHor+=1.0f;
+        	if(eyeposHor>=180.0f)
+       			eyeposHor = -180.0f; /* Turn left */
+            printf("eyeposHor: %f\n",eyeposHor);
+       		break;
         case 6:              //Control + f
             if (fullScreen) {
                 glutReshapeWindow(800, 600);            /* Restore to window */
@@ -231,7 +234,7 @@ int main(int argc, char * argv[])
     glutInitWindowSize(800, 600);
     glutInit(&argc, argv);
     glutCreateWindow("Hello Guus & Julian");
-	printf("Program started!");
+	printf("Program started!\n");
     InitGraphics();
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);

@@ -15,8 +15,10 @@
 #include <GLUT/glut.h>
 #elif _WIN32
 #include <glut.h>
-#else
+#elif  __gnu_linux__
 #include <GL/glut.h>
+#else
+#error "Your OS cannot compile this program!"
 #endif
 
 #include <iostream>
@@ -35,6 +37,7 @@ float eyeposHor = 0.0f; //In horizontal plane: x and z
 float cameraCenterX = 0.0f;
 float cameraCenterY = 0.0f;
 float cameraCenterZ = 0.0f;
+int lastTick = 0;
 bool rotating = true;
 bool fullScreen = false;
 
@@ -124,9 +127,12 @@ void MouseMotion(int x, int y)
 
 void IdleFunc(void)
 {
+	int timeNow = glutGet(GLUT_ELAPSED_TIME);
+    double ticks = (timeNow - lastTick);
     if (rotating) {
-        rotation++;
+        rotation += ticks/10;
     }
+    lastTick = timeNow;
     glutPostRedisplay();
 }
 
@@ -215,6 +221,10 @@ void onDisplay(){
     glEnd();
     
 	glutSwapBuffers();
+}
+
+//Meaning: redefined sleep 
+void rSleep(int millisec){
 #ifdef _WIN32
 	Sleep(10);
 #else

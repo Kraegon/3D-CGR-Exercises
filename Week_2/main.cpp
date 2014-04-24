@@ -276,19 +276,22 @@ void IdleFunc(void)
 
 int main(int argc, char * argv[])
 {
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(800, 600);
-    glutInit(&argc, argv);
-    glutCreateWindow("Hello Guus & Julian");
-	printf("Program started!\n");
-    InitGraphics();
-	glutDisplayFunc (onDisplay);
-	glutReshapeFunc (Reshape);
-	glutKeyboardFunc (Keyboard);
-	glutMouseFunc (MouseButton);
-	glutMotionFunc (MouseMotion);
-	glutIdleFunc (IdleFunc);
-    glutMainLoop();
+  memset(keys,0,256);
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+  glutInitWindowSize(800, 600);
+  glutInit(&argc, argv);
+  glutCreateWindow("Hello Guus & Julian");
+  printf("Program started!");
+  InitGraphics();
+  glutDisplayFunc (onDisplay);
+  glutReshapeFunc (Reshape);
+  glutKeyboardFunc (Keyboard);
+  glutMouseFunc (MouseButton);
+  glutMotionFunc (MouseMotion);
+  glutSpecialFunc (glutSpecial);
+  glutSpecialUpFunc (glutSpecialUp);
+  glutIdleFunc (IdleFunc);
+  glutMainLoop();
 }
 
 

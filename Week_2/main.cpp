@@ -22,6 +22,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
+#include "stb_image.h"
+
 
 #define X_AXIS_ROTATION 1
 #define Y_AXIS_ROTATION 2

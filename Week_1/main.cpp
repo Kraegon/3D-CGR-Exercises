@@ -15,8 +15,10 @@
 #include <GLUT/glut.h>
 #elif _WIN32
 #include <glut.h>
-#else
+#elif  __gnu_linux__
 #include <GL/glut.h>
+#else
+#error "Your OS cannot compile this program!"
 #endif
 
 #include <iostream>
@@ -35,6 +37,7 @@ float eyeposHor = 0.0f; //In horizontal plane: x and z
 float cameraCenterX = 0.0f;
 float cameraCenterY = 0.0f;
 float cameraCenterZ = 0.0f;
+int lastTick = 0;
 bool rotating = true;
 bool fullScreen = false;
 
@@ -124,9 +127,12 @@ void MouseMotion(int x, int y)
 
 void IdleFunc(void)
 {
+	int timeNow = glutGet(GLUT_ELAPSED_TIME);
+    double ticks = (timeNow - lastTick);
     if (rotating) {
-        rotation++;
+        rotation += ticks/10;
     }
+    lastTick = timeNow;
     glutPostRedisplay();
 }
 
@@ -138,17 +144,10 @@ void Keyboard(unsigned char key, int x, int y)
             exit (0);
             break;
        	case 97:			 //a
-        	//cameraCenterX-=0.1f;       /* Move center left, camera will stay in place */ 
-       		//Kinda broke it. Sorry Guus. Temporary functions the same as q & e
-       		eyeposHor+=1.0f;	
-        	if(eyeposHor==180.0f)
-       			eyeposHor = 180.0f; /* Turn left */
+        	cameraCenterX+=0.1f;       /* Move center left*/ 
        		break;
        	case 100:			 //d 
-        	//cameraCenterX+=0.1f;		/* Move center right, camera will stay in place */   
-        	eyeposHor-=1.0f;	
-        	if(eyeposHor==180.0f)
-       			eyeposHor = -180.0f; /* Turn right */
+        	cameraCenterX-=0.1f;		/* Move center right*/   
        		break;
        	case 119:			 //w
        		eyeposVer-=0.1f;        /* Move up */
@@ -190,13 +189,19 @@ void onDisplay(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-					      			gluLookAt(
-	eyeposVer*cos(AsRadian(eyeposHor)),eyeposVer,eyeposVer*sin(AsRadian(eyeposHor)),   //Assumes camera center == 0
-		    	     cameraCenterX,cameraCenterY,cameraCenterZ,
-						              0,1,0
-						                );
+	gluLookAt(
+	//Eye
+	cameraCenterX + (eyeposVer*cos(AsRadian(eyeposHor))),
+	eyeposVer,
+	cameraCenterZ + (eyeposVer*sin(AsRadian(eyeposHor))),
+	//Center
+	cameraCenterX,
+	cameraCenterY,
+	cameraCenterZ,
+	//Up
+	0,1,0
+	);
 
-	                       //Lookat art ^
     //CUBE_A======================== 
 	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
     
@@ -216,6 +221,10 @@ void onDisplay(){
     glEnd();
     
 	glutSwapBuffers();
+}
+
+//Meaning: redefined sleep 
+void rSleep(int millisec){
 #ifdef _WIN32
 	Sleep(10);
 #else

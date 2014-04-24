@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <cstring>
+#include "texture_loader.h"
 #include "stb_image.h"
 
 #define X_AXIS_ROTATION 1

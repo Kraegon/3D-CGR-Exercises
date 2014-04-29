@@ -41,7 +41,8 @@ float cameraCenterX = 0.0f;
 float cameraCenterY = 0.0f;
 float cameraCenterZ = 0.0f;
 int lastTick = 0;
-bool keys[256];//Because we have 256 keys, ofcourse.
+bool specKeys[256];//Looks at special keys
+bool keys[256];//Looks at regular keys
 bool rotating = true;
 bool fullScreen = false;
 
@@ -129,62 +130,24 @@ void MouseMotion(int x, int y)
 {
 }
 
-void glutSpecial(int key, int x, int y){
-  keys[key] = true;
+void glutSpecial(int key, int x, int y)
+{
+  specKeys[key] = true;
 }
 
-void glutSpecialUp(int key, int x, int y){
+void glutSpecialUp(int key, int x, int y)
+{
+  specKeys[key] = false;
+}
+
+void glutKeyboardUp(unsigned char key, int x, int y)
+{
   keys[key] = false;
 }
 
-
-void Keyboard(unsigned char key, int x, int y)
+void glutKeyboard(unsigned char key, int x, int y)
 {
-  switch (key)
-  {
-    case 27:             // ESCAPE key
-        exit (0);
-        break;
-    case 97:       //a
-      cameraCenterX+=0.1f;       /* Move center left*/ 
-      break;
-    case 100:      //d 
-      cameraCenterX-=0.1f;    /* Move center right*/   
-      break;
-    case 119:      //w
-      eyeposVer-=0.1f;        /* Move up */
-      if(eyeposVer <= 0.1)
-        eyeposVer = 0.1; //Stops invert
-      break;
-    case 115:      //s
-      eyeposVer+=0.1f;        /* Move down */
-      break;
-    case 113:            //q
-      eyeposHor-=1.0f;  
-      if(eyeposHor==180.0f)
-        eyeposHor = -180.0f;     /* Turn left */
-        break;
-    case 101:           //e
-      eyeposHor+=1.0f;  
-      if(eyeposHor==180.0f)
-        eyeposHor = 180.0f;       /* Turn right */
-        break;
-    case 6:              //Control + f
-        if (fullScreen) {
-            glutReshapeWindow(800, 600);            /* Restore to window */
-            glutPositionWindow(0,0);
-            fullScreen = !fullScreen;
-        }
-        else
-        {
-            glutFullScreen();                       /* FullScreen glory */
-            fullScreen = !fullScreen;
-        }
-        break;
-    case 112:           //p
-        rotating = !rotating;
-        break;
-  }
+  keys[key] = true;  
 }
 
 void onDisplay(){ 
@@ -204,23 +167,23 @@ void onDisplay(){
   0,1,0
   );
 
-    //CUBE_A======================== 
+  //CUBE_A======================== 
   gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
-    
-    //CUBE_B========================
-    gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
-    
-    //CUBE_C========================
-    gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
-    
-    glLoadIdentity();
-    glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(5, 5);
-    glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
-    glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-    glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-    glEnd();
+  
+  //CUBE_B========================
+  gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
+  
+  //CUBE_C========================
+  gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
+  
+  glLoadIdentity();
+  glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
+  glBegin(GL_LINE_LOOP);
+  glVertex2f(5, 5);
+  glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
+  glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+  glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+  glEnd();
     
   glutSwapBuffers();
 }
@@ -234,36 +197,82 @@ void rSleep(int millisec){
 #endif
 }
 
+int KeyboardIdle(double ticks){
+  if(specKeys[GLUT_KEY_RIGHT])
+  {
+    eyeposHor-=ticks/10;  
+    if(eyeposHor==-180.0f)
+      eyeposHor = 180.0f;
+  }
+  if(specKeys[GLUT_KEY_LEFT])
+  {
+    eyeposHor+=ticks/10;
+    if(eyeposHor==180.0f)
+      eyeposHor = -180.0f;
+  }
+  if(specKeys[GLUT_KEY_UP]){
+    eyeposVer-=ticks/100;            
+    if(eyeposVer <= 0.1)
+      eyeposVer = 0.1;
+  }
+  if(specKeys[GLUT_KEY_DOWN]){
+    eyeposVer+=ticks/100;
+  }
+  if(keys[27]){ //ESCAPE
+    exit(0);
+  }
+  if(keys[97]){ //a
+    cameraCenterX+=0.1f;
+  }
+  if(keys[100]){ //d
+    cameraCenterX-=0.1f;
+  }
+  if(keys[119]){ //w
+    eyeposVer-=0.1f;        /* Move up */
+    if(eyeposVer <= 0.1)
+      eyeposVer = 0.1; //Stops invert
+  }
+  if(keys[115]){ //s
+    eyeposVer+=0.1f;        /* Move down */
+  }
+  if(keys[113]){ //q
+    eyeposHor-=1.0f;  
+    if(eyeposHor==180.0f)
+      eyeposHor = -180.0f;     /* Turn left */
+  }
+  if(keys[101]){ //e
+    eyeposHor+=1.0f;  
+    if(eyeposHor==180.0f)
+      eyeposHor = 180.0f;       /* Turn right */
+  }
+  if(keys[6]){  //ctrl+f
+    if(fullScreen){
+    glutReshapeWindow(800, 600);            /* Restore to window */
+    glutPositionWindow(0,0);
+    fullScreen = !fullScreen;
+    }
+    else
+    {
+      glutFullScreen();                       /* FullScreen glory */
+      fullScreen = !fullScreen;
+    }
+  }
+  if(keys[112]){ //p
+    rotating = !rotating;
+  } 
+}
+
 void IdleFunc(void)
 {
   int timeNow = glutGet(GLUT_ELAPSED_TIME);
-    double ticks = (timeNow - lastTick);
-    if (rotating) {
-        rotation += ticks/10;
-    }
-    if(keys[GLUT_KEY_RIGHT])
-    {
-      eyeposHor-=ticks/10;  
-      if(eyeposHor==-180.0f)
-        eyeposHor = 180.0f;
-    }
-    if(keys[GLUT_KEY_LEFT])
-    {
-      eyeposHor+=ticks/10;  
-      if(eyeposHor==180.0f)
-        eyeposHor = -180.0f;
-    }
-    if(keys[GLUT_KEY_UP]){
-      eyeposVer-=ticks/100;            
-      if(eyeposVer <= 0.1)
-        eyeposVer = 0.1;
-    }
-    if(keys[GLUT_KEY_DOWN]){
-      eyeposVer+=ticks/100;
-    }
-    lastTick = timeNow;
-    rSleep(ticks/10);
-    glutPostRedisplay();
+  double ticks = (timeNow - lastTick);
+  if (rotating) {
+    rotation += ticks/10;
+  }
+  KeyboardIdle(ticks);
+  lastTick = timeNow;
+  rSleep(ticks/10);
+  glutPostRedisplay();
 }
 
 int main(int argc, char * argv[])
@@ -277,7 +286,8 @@ int main(int argc, char * argv[])
   InitGraphics();
   glutDisplayFunc (onDisplay);
   glutReshapeFunc (Reshape);
-  glutKeyboardFunc (Keyboard);
+  glutKeyboardFunc (glutKeyboard);
+  glutKeyboardUpFunc(glutKeyboardUp);
   glutMouseFunc (MouseButton);
   glutMotionFunc (MouseMotion);
   glutSpecialFunc (glutSpecial);

@@ -14,7 +14,6 @@
 #error "Your OS cannot compile this program!"
 #endif
 #include "texture_loader.h"
-#include <iostream>
 #include <string>
 #include "stb_image.c"
 using namespace std;
@@ -22,12 +21,9 @@ using namespace std;
 
 texture_loader::texture_loader(const char* fileName)
 {
-    int width, height, bpp;
-    GLuint textureId;
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
     unsigned char* imgData = stbi_load(fileName, &width, &height, &bpp, 4);
-    
     glTexImage2D(	GL_TEXTURE_2D,
                  0,		//level
                  GL_RGBA,		//internal format
@@ -40,8 +36,18 @@ texture_loader::texture_loader(const char* fileName)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void DoSomething(int a)
+void texture_loader::initTexture(void)
 {
-	
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glEnable(GL_TEXTURE_2D);
+}
+
+void texture_loader::getTexture(int x, int y)
+{
+    if (x>1||y>1||x<0||y<0) {
+        printf("I can't use values above 1 or below 0!");
+    }
+    else glTexCoord2f(x,y);
+
 }
 

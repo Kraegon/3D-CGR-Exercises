@@ -26,7 +26,6 @@
 #include <math.h>
 #include <cstring>
 #include "texture_loader.h"
-#include "stb_image.h"
 
 #define X_AXIS_ROTATION 1
 #define Y_AXIS_ROTATION 2
@@ -44,8 +43,43 @@ int lastTick = 0;
 bool keys[256];//Because we have 256 keys, ofcourse.
 bool rotating = true;
 bool fullScreen = false;
+const char* terrain = "terrain.png";
+
+void gfxDrawCube(float, float, float, float, int);
+void Display(void);
+void Reshape(GLint, GLint);
+void InitGraphics(void);
+void MouseButton(int, int, int, int);
+void MouseMotion(int, int);
+void glutSpecial(int, int, int);
+void glutSpecialUp(int, int, int);
+void Keyboard(unsigned char, int, int);
+void onDisplay();
+void rSleep(int);
+void IdleFunc(void);
+
+int main(int argc, char * argv[])
+{
+	memset(keys,0,256);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowSize(800, 600);
+	glutInit(&argc, argv);
+	glutCreateWindow("Hello Guus & Julian");
+	printf("Program started!\n");
+	InitGraphics();
+	glutDisplayFunc (onDisplay);
+	glutReshapeFunc (Reshape);
+	glutKeyboardFunc (Keyboard);
+	glutMouseFunc (MouseButton);
+	glutMotionFunc (MouseMotion);
+	glutSpecialFunc (glutSpecial);
+	glutSpecialUpFunc (glutSpecialUp);
+	glutIdleFunc (IdleFunc);
+	glutMainLoop();
+}
 
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
+	texture_loader texture1(terrain);
   glPushMatrix();
     glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
     switch(angle){
@@ -60,43 +94,62 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
         break;
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
-    
+	texture1.initTexture();
   glBegin(GL_QUADS);
-    glColor3f(1,1,0);
+		texture1.getTexture(0,0);
     glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1,0);
     glVertex3f(posX,posY+size,posZ);
+		texture1.getTexture(0,1);
     glVertex3f(posX+size,posY+size,posZ);
-    glVertex3f(posX+size,posY,posZ);
-    
-    glColor3f(0,1,0);
-    glVertex3f(posX,posY,posZ+size);
-    glVertex3f(posX,posY+size,posZ+size);
-    glVertex3f(posX+size,posY+size,posZ+size);
-    glVertex3f(posX+size,posY,posZ+size);
-
-    glColor3f(0,0,1);
-    glVertex3f(posX,posY,posZ);
-    glVertex3f(posX,posY,posZ+size);
-    glVertex3f(posX,posY+size,posZ+size);
-    glVertex3f(posX,posY+size,posZ);
-
-    glColor3f(1,0,0);   
-    glVertex3f(posX+size,posY,posZ);
-    glVertex3f(posX+size,posY,posZ+size);
-    glVertex3f(posX+size,posY+size,posZ+size);
-    glVertex3f(posX+size,posY+size,posZ);
-
-    glColor3f(0,1,1);
-    glVertex3f(posX,posY,posZ);
-    glVertex3f(posX,posY,posZ+size);
-    glVertex3f(posX+size,posY,posZ+size);
+		texture1.getTexture(1,1);
     glVertex3f(posX+size,posY,posZ);
 
-    glColor3f(1,1,1);
+		texture1.getTexture(0,0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1,0);
     glVertex3f(posX,posY+size,posZ);
-    glVertex3f(posX,posY+size,posZ+size);
-    glVertex3f(posX+size,posY+size,posZ+size);
+		texture1.getTexture(0,1);
     glVertex3f(posX+size,posY+size,posZ);
+		texture1.getTexture(1,1);
+    glVertex3f(posX+size,posY,posZ);
+	
+		texture1.getTexture(0,0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1,0);
+    glVertex3f(posX,posY+size,posZ);
+		texture1.getTexture(0,1);
+    glVertex3f(posX+size,posY+size,posZ);
+		texture1.getTexture(1,1);
+    glVertex3f(posX+size,posY,posZ);
+	
+		texture1.getTexture(0,0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1,0);
+    glVertex3f(posX,posY+size,posZ);
+		texture1.getTexture(0,1);
+    glVertex3f(posX+size,posY+size,posZ);
+		texture1.getTexture(1,1);
+    glVertex3f(posX+size,posY,posZ);
+	
+		texture1.getTexture(0,0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1,0);
+    glVertex3f(posX,posY+size,posZ);
+		texture1.getTexture(0,1);
+    glVertex3f(posX+size,posY+size,posZ);
+		texture1.getTexture(1,1);
+    glVertex3f(posX+size,posY,posZ);
+	
+		texture1.getTexture(0,0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1,0);
+    glVertex3f(posX,posY+size,posZ);
+		texture1.getTexture(0,1);
+    glVertex3f(posX+size,posY+size,posZ);
+		texture1.getTexture(1,1);
+    glVertex3f(posX+size,posY,posZ);
+	
   glEnd();
   glPopMatrix();
 }
@@ -215,7 +268,7 @@ void onDisplay(){
   );
 
     //CUBE_A======================== 
-  gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
+    gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
     
     //CUBE_B========================
     gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
@@ -274,26 +327,6 @@ void IdleFunc(void)
     lastTick = timeNow;
     rSleep(ticks/10);
     glutPostRedisplay();
-}
-
-int main(int argc, char * argv[])
-{
-  memset(keys,0,256);
-  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-  glutInitWindowSize(800, 600);
-  glutInit(&argc, argv);
-  glutCreateWindow("Hello Guus & Julian");
-  printf("Program started!\n");
-  InitGraphics();
-  glutDisplayFunc (onDisplay);
-  glutReshapeFunc (Reshape);
-  glutKeyboardFunc (Keyboard);
-  glutMouseFunc (MouseButton);
-  glutMotionFunc (MouseMotion);
-  glutSpecialFunc (glutSpecial);
-  glutSpecialUpFunc (glutSpecialUp);
-  glutIdleFunc (IdleFunc);
-  glutMainLoop();
 }
 
 

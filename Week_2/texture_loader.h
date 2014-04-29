@@ -2,10 +2,12 @@
 class texture_loader
 {
 private:
-	int a;
+    int width, height, bpp, a;
+    GLuint textureId;
     std::string texturePath;
 
 public:
     texture_loader(const char*);
-    
+    void getTexture(int, int);
+    void initTexture(void);
 };

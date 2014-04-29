@@ -238,7 +238,7 @@ int main(int argc, char * argv[])
     glutInitWindowSize(800, 600);
     glutInit(&argc, argv);
     glutCreateWindow("Hello Guus & Julian");
-	printf("Program started!");
+	printf("Program started!\n");
     InitGraphics();
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);

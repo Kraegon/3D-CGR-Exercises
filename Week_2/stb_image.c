@@ -293,7 +293,7 @@ static unsigned char *stbi_load_main(stbi *s, int *x, int *y, int *comp, int req
    return epuc("unknown image type", "Image not of any known type, or corrupt");
 }
 
-#ifndef STBI_NO_STDIO
+//#ifndef STBI_NO_STDIO
 unsigned char *stbi_load(char const *filename, int *x, int *y, int *comp, int req_comp)
 {
    FILE *f = fopen(filename, "rb");
@@ -310,7 +310,7 @@ unsigned char *stbi_load_from_file(FILE *f, int *x, int *y, int *comp, int req_c
    start_file(&s,f);
    return stbi_load_main(&s,x,y,comp,req_comp);
 }
-#endif //!STBI_NO_STDIO
+//#endif //!STBI_NO_STDIO
 
 unsigned char *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp)
 {

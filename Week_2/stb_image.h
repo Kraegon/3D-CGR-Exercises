@@ -158,11 +158,11 @@ extern "C" {
     
     extern stbi_uc *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp);
     
-#ifndef STBI_NO_STDIO
+//#ifndef STBI_NO_STDIO
     extern stbi_uc *stbi_load            (char const *filename,     int *x, int *y, int *comp, int req_comp);
     extern stbi_uc *stbi_load_from_file  (FILE *f,                  int *x, int *y, int *comp, int req_comp);
     // for stbi_load_from_file, file pointer is left pointing immediately after image
-#endif
+//#endif
     
     typedef struct
     {

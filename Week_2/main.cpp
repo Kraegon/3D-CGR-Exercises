@@ -46,17 +46,6 @@ bool specKeys[256]; //Looks at special keys             //Part of: keyboard
 bool keys[256];     //Looks at regular keys             //Part of: keyboard
 bool rotating = true;                                   //Part of: cubes
 bool fullScreen = false;                                //Part of: keyboard?
-
-float rotation = 0.0f;
-float eyeposVer = 1.2f; //In vertical plane: y
-float eyeposHor = 0.0f; //In horizontal plane: x and z
-float cameraCenterX = 0.0f;
-float cameraCenterY = 0.0f;
-float cameraCenterZ = 0.0f;
-int lastTick = 0;
-bool keys[256];//Because we have 256 keys, ofcourse.
-bool rotating = true;
-bool fullScreen = false;
 const char* terrain = "terrain.png";
 
 void gfxDrawCube(float, float, float, float, int);
@@ -71,10 +60,11 @@ void Keyboard(unsigned char, int, int);
 void onDisplay();
 void rSleep(int);
 void IdleFunc(void);
+void glutKeyboardUp(unsigned char, int, int);
+void glutKeyboard(unsigned char, int, int);
 
 int main(int argc, char * argv[])
 {
-	memset(keys,0,256);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
 	glutInit(&argc, argv);
@@ -83,7 +73,8 @@ int main(int argc, char * argv[])
 	InitGraphics();
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
-	glutKeyboardFunc (Keyboard);
+	glutKeyboardFunc (glutKeyboard);
+	glutKeyboardUpFunc(glutKeyboardUp);
 	glutMouseFunc (MouseButton);
 	glutMotionFunc (MouseMotion);
 	glutSpecialFunc (glutSpecial);
@@ -113,59 +104,60 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
 	texture1.initTexture();
   glBegin(GL_QUADS);
-		texture1.getTexture(0,0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1,0);
-    glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(0,1);
-    glVertex3f(posX+size,posY+size,posZ);
-		texture1.getTexture(1,1);
-    glVertex3f(posX+size,posY,posZ);
 
-		texture1.getTexture(0,0);
+	texture1.getTexture(0, 0);
     glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1,0);
+		texture1.getTexture(1, 1);
     glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(0,1);
+		texture1.getTexture(1, 1);
     glVertex3f(posX+size,posY+size,posZ);
-		texture1.getTexture(1,1);
+	texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY,posZ);
+    
+	texture1.getTexture(0, 0);
+    glVertex3f(posX,posY,posZ+size);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX,posY+size,posZ+size);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY+size,posZ+size);
+	texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY,posZ+size);
+	
+	texture1.getTexture(0, 0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX,posY,posZ+size);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX,posY+size,posZ+size);
+	texture1.getTexture(1, 1);
+    glVertex3f(posX,posY+size,posZ);
+	
+	texture1.getTexture(0, 0);
+    glVertex3f(posX+size,posY,posZ);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY,posZ+size);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY+size,posZ+size);
+	texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY+size,posZ);
+	
+	texture1.getTexture(0, 0);
+    glVertex3f(posX,posY,posZ);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX,posY,posZ+size);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY,posZ+size);
+	texture1.getTexture(1, 1);
     glVertex3f(posX+size,posY,posZ);
 	
-		texture1.getTexture(0,0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1,0);
+	texture1.getTexture(0, 0);
     glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(0,1);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX,posY+size,posZ+size);
+		texture1.getTexture(1, 1);
+    glVertex3f(posX+size,posY+size,posZ+size);
+	texture1.getTexture(1, 1);
     glVertex3f(posX+size,posY+size,posZ);
-		texture1.getTexture(1,1);
-    glVertex3f(posX+size,posY,posZ);
-	
-		texture1.getTexture(0,0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1,0);
-    glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(0,1);
-    glVertex3f(posX+size,posY+size,posZ);
-		texture1.getTexture(1,1);
-    glVertex3f(posX+size,posY,posZ);
-	
-		texture1.getTexture(0,0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1,0);
-    glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(0,1);
-    glVertex3f(posX+size,posY+size,posZ);
-		texture1.getTexture(1,1);
-    glVertex3f(posX+size,posY,posZ);
-	
-		texture1.getTexture(0,0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1,0);
-    glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(0,1);
-    glVertex3f(posX+size,posY+size,posZ);
-		texture1.getTexture(1,1);
-    glVertex3f(posX+size,posY,posZ);
 	
   glEnd();
   glPopMatrix();
@@ -237,23 +229,32 @@ void onDisplay(){
   0,1,0
   );
 
-    //CUBE_A======================== 
-    gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
-    
-    //CUBE_B========================
-    gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
-    
-    //CUBE_C========================
-    gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
-    
-    glLoadIdentity();
-    glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(5, 5);
-    glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
-    glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-    glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-    glEnd();
+  //PLAYER==========================
+  gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM);
+
+  //CUBE_A======================== 
+  gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
+  
+  //CUBE_B========================
+  gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
+  
+  //CUBE_C========================
+  gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
+
+  //ETC_CUBES=====================
+  gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION);
+  gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION);
+  gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION);
+  gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION);
+  
+  glLoadIdentity();
+  glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
+  glBegin(GL_LINE_LOOP);
+  glVertex2f(5, 5);
+  glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
+  glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+  glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+  glEnd();
     
   glutSwapBuffers();
 }
@@ -342,6 +343,4 @@ void IdleFunc(void)
   rSleep(ticks/10);
   glutPostRedisplay();
 }
-
-
 

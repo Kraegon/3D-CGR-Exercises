@@ -27,11 +27,25 @@
 #include <cstring>
 #include "texture_loader.h"
 
+#define NO_ROTATION     0
 #define X_AXIS_ROTATION 1
 #define Y_AXIS_ROTATION 2
 #define Z_AXIS_ROTATION 3
+#define FOLLOW_CAM      4
 
-#define AsRadian(x) (x*(M_PI/180))
+#define AsRadian(x) (x*(M_PI/180.0f))
+                                                        //One of these days we gotta split this.
+float rotation = 0.0f;                                  //Part of: cubes
+float eyeposVer = 1.2f; //In vertical plane: y          //Part of: camera
+float eyeposHor = 0.0f; //In horizontal plane: x and z  //Part of: camera
+float cameraCenterX = 0.0f;                             //Part of: camera
+float cameraCenterY = 0.0f;                             //Part of: camera
+float cameraCenterZ = 0.0f;                             //Part of: camera
+int lastTick = 0;                                       //Part of: refreshing
+bool specKeys[256]; //Looks at special keys             //Part of: keyboard
+bool keys[256];     //Looks at regular keys             //Part of: keyboard
+bool rotating = true;                                   //Part of: cubes
+bool fullScreen = false;                                //Part of: keyboard?
 
 float rotation = 0.0f;
 float eyeposVer = 1.2f; //In vertical plane: y
@@ -91,6 +105,9 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
         break;
       case 3:
       glRotatef(rotation,0,0,1);
+        break;
+      case 4:
+      glRotatef(-eyeposHor,0,1,0);
         break;
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
@@ -180,74 +197,27 @@ void MouseButton(int button, int state, int x, int y)
 
 void MouseMotion(int x, int y)
 {
+
 }
 
-void glutSpecial(int key, int x, int y){
-  keys[key] = true;
+void glutSpecial(int key, int x, int y)
+{
+  specKeys[key] = true;
 }
 
-void glutSpecialUp(int key, int x, int y){
+void glutSpecialUp(int key, int x, int y)
+{
+  specKeys[key] = false;
+}
+
+void glutKeyboardUp(unsigned char key, int x, int y)
+{
   keys[key] = false;
 }
 
-
-void Keyboard(unsigned char key, int x, int y)
+void glutKeyboard(unsigned char key, int x, int y)
 {
-	switch (key)
-	{
-        case 27:             // ESCAPE key
-            exit (0);
-            break;
-       	case 97:			 //a
-        	//cameraCenterX-=0.1f;       /* Move center left, camera will stay in place */ 
-       		//Kinda broke it. Sorry Guus. Temporary functions the same as q & e
-       		eyeposHor+=1.0f;	
-        	if(eyeposHor>=180.0f)
-       			eyeposHor = -180.0f; /* Turn left */
-            printf("eyeposHor: %f\n",eyeposHor);
-       		break;
-       	case 100:			 //d 
-        	//cameraCenterX+=0.1f;		/* Move center right, camera will stay in place */   
-            eyeposHor-=1.0f;
-        	if(eyeposHor<=-180.0f)
-       			eyeposHor = 180.0f;     /* Turn left */
-            printf("eyeposHor: %f\n",eyeposHor);
-       		break;
-       	case 119:			 //w
-       		eyeposVer-=0.1f;            /* Move up */
-       		if(eyeposVer <= 0.1)
-       			eyeposVer = 0.1;        //Stops invert
-       		break;
-       	case 115:			 //s
-       		eyeposVer+=0.1f;            /* Move down */
-			break;
-        case 113:            //q
-            eyeposHor-=1.0f;	
-        	if(eyeposHor<=-180.0f)
-       			eyeposHor = 180.0f;     /* Turn left */
-            break;
-        case 101:           //e
-       		eyeposHor+=1.0f;
-        	if(eyeposHor>=180.0f)
-       			eyeposHor = -180.0f; /* Turn left */
-            printf("eyeposHor: %f\n",eyeposHor);
-       		break;
-        case 6:              //Control + f
-            if (fullScreen) {
-                glutReshapeWindow(800, 600);            /* Restore to window */
-                glutPositionWindow(0,0);
-                fullScreen = !fullScreen;
-            }
-            else
-            {
-                glutFullScreen();                       /* FullScreen glory */
-                fullScreen = !fullScreen;
-            }
-            break;
-        case 112:           //p
-            rotating = !rotating;
-            break;
-	}
+  keys[key] = true;  
 }
 
 void onDisplay(){ 
@@ -297,36 +267,80 @@ void rSleep(int millisec){
 #endif
 }
 
+void KeyboardIdle(double const &ticks){
+  double factor = 0.1;
+  eyeposHor = fmod(eyeposHor, 360.0f);
+  if(specKeys[GLUT_KEY_RIGHT])
+  {      
+    eyeposHor+=ticks/10;  //Rotate around center, right
+  }
+  if(specKeys[GLUT_KEY_LEFT])
+  {
+    eyeposHor-=ticks/10;  //Rotate around center, left
+  }
+  if(specKeys[GLUT_KEY_UP]){
+    cameraCenterY += 0.1f; //Lookup
+    if(cameraCenterY > 10)
+      cameraCenterY = 10;
+  }
+  if(specKeys[GLUT_KEY_DOWN]){
+    cameraCenterY -= 0.1f; //Lookdown
+    if(cameraCenterY < -10)
+      cameraCenterY = -10;
+  }
+  if(keys[97]){ //a
+    eyeposHor-=ticks/10; //Temporarily turn left, couldn't figure out strafing
+  }
+  if(keys[100]){ //d
+    eyeposHor+=ticks/10; //Temporarily turn left, couldn't figure out strafing
+  }
+  if(keys[119]){ //w
+    cameraCenterX -= factor * cos(AsRadian(eyeposHor));       // Move forward
+    cameraCenterZ -= factor * sin(AsRadian(eyeposHor));
+  }
+  if(keys[115]){ //s
+    cameraCenterX += factor * cos(AsRadian(eyeposHor));       // Move backwards
+    cameraCenterZ += factor * sin(AsRadian(eyeposHor));
+  }
+  if(keys[113]){ //q
+    eyeposVer+=ticks/100; //Zoom out
+  }
+  if(keys[101]){ //e
+    eyeposVer-=ticks/100;
+    if(eyeposVer <= 0.5)
+      eyeposVer = 0.5;  //Zoom in
+  }
+  if(keys[6]){  //ctrl+f
+    if(fullScreen){
+      glutReshapeWindow(800, 600);            // Restore to window
+      glutPositionWindow(0,0);
+      fullScreen = !fullScreen;
+    }
+    else
+    {
+      glutFullScreen();                       // FullScreen glory
+      fullScreen = !fullScreen;
+    }
+  }
+  if(keys[112]){ //p
+    rotating = !rotating;
+  }  
+  if(keys[27]){ //ESCAPE
+    exit(0);
+  }
+}   
+
 void IdleFunc(void)
 {
   int timeNow = glutGet(GLUT_ELAPSED_TIME);
-    double ticks = (timeNow - lastTick);
-    if (rotating) {
-        rotation += ticks/10;
-    }
-    if(keys[GLUT_KEY_RIGHT])
-    {
-      eyeposHor-=ticks/10;  
-      if(eyeposHor==-180.0f)
-        eyeposHor = 180.0f;
-    }
-    if(keys[GLUT_KEY_LEFT])
-    {
-      eyeposHor+=ticks/10;  
-      if(eyeposHor==180.0f)
-        eyeposHor = -180.0f;
-    }
-    if(keys[GLUT_KEY_UP]){
-      eyeposVer-=ticks/100;            
-      if(eyeposVer <= 0.1)
-        eyeposVer = 0.1;
-    }
-    if(keys[GLUT_KEY_DOWN]){
-      eyeposVer+=ticks/100;
-    }
-    lastTick = timeNow;
-    rSleep(ticks/10);
-    glutPostRedisplay();
+  double ticks = (timeNow - lastTick);
+  if (rotating) {
+    rotation += ticks/10;
+  }
+  KeyboardIdle(ticks);
+  lastTick = timeNow;
+  rSleep(ticks/10);
+  glutPostRedisplay();
 }
 
 

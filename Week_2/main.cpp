@@ -28,23 +28,26 @@
 #include "texture_loader.h"
 #include "stb_image.h"
 
+#define NO_ROTATION     0
 #define X_AXIS_ROTATION 1
 #define Y_AXIS_ROTATION 2
 #define Z_AXIS_ROTATION 3
+#define FOLLOW_CAM      4
 
-#define AsRadian(x) (x*(M_PI/180))
+#define AsRadian(x) (x*(M_PI/180.0f))
+                                                        //One of these days we gotta split this.
+float rotation = 0.0f;                                  //Part of: cubes
+float eyeposVer = 1.2f; //In vertical plane: y          //Part of: camera
+float eyeposHor = 0.0f; //In horizontal plane: x and z  //Part of: camera
+float cameraCenterX = 0.0f;                             //Part of: camera
+float cameraCenterY = 0.0f;                             //Part of: camera
+float cameraCenterZ = 0.0f;                             //Part of: camera
+int lastTick = 0;                                       //Part of: refreshing
+bool specKeys[256]; //Looks at special keys             //Part of: keyboard
+bool keys[256];     //Looks at regular keys             //Part of: keyboard
+bool rotating = true;                                   //Part of: cubes
+bool fullScreen = false;                                //Part of: keyboard?
 
-float rotation = 0.0f;
-float eyeposVer = 1.2f; //In vertical plane: y
-float eyeposHor = 0.0f; //In horizontal plane: x and z
-float cameraCenterX = 0.0f;
-float cameraCenterY = 0.0f;
-float cameraCenterZ = 0.0f;
-int lastTick = 0;
-bool specKeys[256];//Looks at special keys
-bool keys[256];//Looks at regular keys
-bool rotating = true;
-bool fullScreen = false;
 
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
   glPushMatrix();
@@ -58,6 +61,9 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
         break;
       case 3:
       glRotatef(rotation,0,0,1);
+        break;
+      case 4:
+      glRotatef(-eyeposHor,0,1,0);
         break;
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
@@ -128,6 +134,7 @@ void MouseButton(int button, int state, int x, int y)
 
 void MouseMotion(int x, int y)
 {
+
 }
 
 void glutSpecial(int key, int x, int y)
@@ -167,6 +174,9 @@ void onDisplay(){
   0,1,0
   );
 
+  //PLAYER==========================
+  gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM);
+
   //CUBE_A======================== 
   gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
   
@@ -175,6 +185,12 @@ void onDisplay(){
   
   //CUBE_C========================
   gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
+
+  //ETC_CUBES=====================
+  gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION);
+  gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION);
+  gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION);
+  gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION);
   
   glLoadIdentity();
   glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
@@ -197,70 +213,68 @@ void rSleep(int millisec){
 #endif
 }
 
-int KeyboardIdle(double ticks){
+void KeyboardIdle(double const &ticks){
+  double factor = 0.1;
+  eyeposHor = fmod(eyeposHor, 360.0f);
   if(specKeys[GLUT_KEY_RIGHT])
-  {
-    eyeposHor-=ticks/10;  
-    if(eyeposHor==-180.0f)
-      eyeposHor = 180.0f;
+  {      
+    eyeposHor+=ticks/10;  //Rotate around center, right
   }
   if(specKeys[GLUT_KEY_LEFT])
   {
-    eyeposHor+=ticks/10;
-    if(eyeposHor==180.0f)
-      eyeposHor = -180.0f;
+    eyeposHor-=ticks/10;  //Rotate around center, left
   }
   if(specKeys[GLUT_KEY_UP]){
-    eyeposVer-=ticks/100;            
-    if(eyeposVer <= 0.1)
-      eyeposVer = 0.1;
+    cameraCenterY += 0.1f; //Lookup
+    if(cameraCenterY > 10)
+      cameraCenterY = 10;
   }
   if(specKeys[GLUT_KEY_DOWN]){
-    eyeposVer+=ticks/100;
-  }
-  if(keys[27]){ //ESCAPE
-    exit(0);
+    cameraCenterY -= 0.1f; //Lookdown
+    if(cameraCenterY < -10)
+      cameraCenterY = -10;
   }
   if(keys[97]){ //a
-    cameraCenterX+=0.1f;
+    eyeposHor-=ticks/10; //Temporarily turn left, couldn't figure out strafing
   }
   if(keys[100]){ //d
-    cameraCenterX-=0.1f;
+    eyeposHor+=ticks/10; //Temporarily turn left, couldn't figure out strafing
   }
   if(keys[119]){ //w
-    eyeposVer-=0.1f;        /* Move up */
-    if(eyeposVer <= 0.1)
-      eyeposVer = 0.1; //Stops invert
+    cameraCenterX -= factor * cos(AsRadian(eyeposHor));       // Move forward
+    cameraCenterZ -= factor * sin(AsRadian(eyeposHor));
   }
   if(keys[115]){ //s
-    eyeposVer+=0.1f;        /* Move down */
+    cameraCenterX += factor * cos(AsRadian(eyeposHor));       // Move backwards
+    cameraCenterZ += factor * sin(AsRadian(eyeposHor));
   }
   if(keys[113]){ //q
-    eyeposHor-=1.0f;  
-    if(eyeposHor==180.0f)
-      eyeposHor = -180.0f;     /* Turn left */
+    eyeposVer+=ticks/100; //Zoom out
   }
   if(keys[101]){ //e
-    eyeposHor+=1.0f;  
-    if(eyeposHor==180.0f)
-      eyeposHor = 180.0f;       /* Turn right */
+    eyeposVer-=ticks/100;
+    if(eyeposVer <= 0.5)
+      eyeposVer = 0.5;  //Zoom in
   }
   if(keys[6]){  //ctrl+f
     if(fullScreen){
-    glutReshapeWindow(800, 600);            /* Restore to window */
-    glutPositionWindow(0,0);
-    fullScreen = !fullScreen;
+      glutReshapeWindow(800, 600);            // Restore to window
+      glutPositionWindow(0,0);
+      fullScreen = !fullScreen;
     }
     else
     {
-      glutFullScreen();                       /* FullScreen glory */
+      glutFullScreen();                       // FullScreen glory
       fullScreen = !fullScreen;
     }
   }
   if(keys[112]){ //p
     rotating = !rotating;
-  } 
-}
+  }  
+  if(keys[27]){ //ESCAPE
+    exit(0);
+  }
+}   
 
 void IdleFunc(void)
 {
@@ -277,7 +291,6 @@ void IdleFunc(void)
 
 int main(int argc, char * argv[])
 {
-  memset(keys,0,256);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(800, 600);
   glutInit(&argc, argv);

@@ -32,6 +32,8 @@
 #define Y_AXIS_ROTATION 2
 #define Z_AXIS_ROTATION 3
 #define FOLLOW_CAM      4
+#define NO_TEXTURE		5
+#define DEFAULT_TEXTURE 6
 
 #define AsRadian(x) (x*(M_PI/180.0f))
                                                         //One of these days we gotta split this.
@@ -48,7 +50,7 @@ bool rotating = true;                                   //Part of: cubes
 bool fullScreen = false;                                //Part of: keyboard?
 const char* terrain = "terrain.png";
 
-void gfxDrawCube(float, float, float, float, int);
+void gfxDrawCube(float, float, float, float, int, int);
 void Display(void);
 void Reshape(GLint, GLint);
 void InitGraphics(void);
@@ -83,8 +85,7 @@ int main(int argc, char * argv[])
 	glutMainLoop();
 }
 
-void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
-	texture_loader texture1(terrain);
+void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int texture){
   glPushMatrix();
     glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
     switch(angle){
@@ -102,65 +103,111 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle){
         break;
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
-	texture1.initTexture();
-  glBegin(GL_QUADS);
+	if (texture == DEFAULT_TEXTURE) {
+			texture_loader texture1(terrain);
+			texture1.initTexture();
+			glBegin(GL_QUADS);
+			
+			texture1.getTexture(0, 0);
+			glVertex3f(posX,posY,posZ);
+			texture1.getTexture(0, 0.005);
+			glVertex3f(posX,posY+size,posZ);
+			texture1.getTexture(0.005, 0);
+			glVertex3f(posX+size,posY+size,posZ);
+			texture1.getTexture(0.005, 0.005);
+			glVertex3f(posX+size,posY,posZ);
+			
+			texture1.getTexture(0, 0);
+			glVertex3f(posX,posY,posZ+size);
+			texture1.getTexture(0, 0.005);
+			glVertex3f(posX,posY+size,posZ+size);
+			texture1.getTexture(0.005, 0);
+			glVertex3f(posX+size,posY+size,posZ+size);
+			texture1.getTexture(0.005, 0.005);
+			glVertex3f(posX+size,posY,posZ+size);
+			
+			texture1.getTexture(0, 0);
+			glVertex3f(posX,posY,posZ);
+			texture1.getTexture(0, 0.005);
+			glVertex3f(posX,posY,posZ+size);
+			texture1.getTexture(0.005, 0);
+			glVertex3f(posX,posY+size,posZ+size);
+			texture1.getTexture(0.005, 0.005);
+			glVertex3f(posX,posY+size,posZ);
+			
+			texture1.getTexture(0, 0);
+			glVertex3f(posX+size,posY,posZ);
+			texture1.getTexture(0, 0.005);
+			glVertex3f(posX+size,posY,posZ+size);
+			texture1.getTexture(0.005, 0);
+			glVertex3f(posX+size,posY+size,posZ+size);
+			texture1.getTexture(0.005, 0.005);
+			glVertex3f(posX+size,posY+size,posZ);
+			
+			texture1.getTexture(0, 0);
+			glVertex3f(posX,posY,posZ);
+			texture1.getTexture(0.005, 0);
+			glVertex3f(posX,posY,posZ+size);
+			texture1.getTexture(0, 0.005);
+			glVertex3f(posX+size,posY,posZ+size);
+			texture1.getTexture(0.005, 0.005);
+			glVertex3f(posX+size,posY,posZ);
+			
+			texture1.getTexture(0, 0);
+			glVertex3f(posX,posY+size,posZ);
+			texture1.getTexture(0.005, 0);
+			glVertex3f(posX,posY+size,posZ+size);
+			texture1.getTexture(0, 0.005);
+			glVertex3f(posX+size,posY+size,posZ+size);
+			texture1.getTexture(0.005, 0.005);
+			glVertex3f(posX+size,posY+size,posZ);
+			texture1.stashTexture();
+		glEnd();
 
-	texture1.getTexture(0, 0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY+size,posZ);
-	texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY,posZ);
-    
-	texture1.getTexture(0, 0);
-    glVertex3f(posX,posY,posZ+size);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX,posY+size,posZ+size);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY+size,posZ+size);
-	texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY,posZ+size);
+	}
+	else if(texture == NO_TEXTURE)
+	{
+		glColor3f(1, 1, 1);
+		glBegin(GL_QUADS);
+		glColor3f(1,1,1);
+		glVertex3f(posX,posY,posZ);
+		glVertex3f(posX,posY+size,posZ);
+		glVertex3f(posX+size,posY+size,posZ);
+		glVertex3f(posX+size,posY,posZ);
+		
+		glColor3f(1, 1, 1);
+		glVertex3f(posX,posY,posZ+size);
+		glVertex3f(posX,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ+size);
+		glVertex3f(posX+size,posY,posZ+size);
+		
+		glColor3f(1,0.90,1);
+		glVertex3f(posX,posY,posZ);
+		glVertex3f(posX,posY,posZ+size);
+		glVertex3f(posX,posY+size,posZ+size);
+		glVertex3f(posX,posY+size,posZ);
+		
+		glColor3f(1,0.85,1);
+		glVertex3f(posX+size,posY,posZ);
+		glVertex3f(posX+size,posY,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ);
+		
+		glColor3f(1,0.80,1);
+		glVertex3f(posX,posY,posZ);
+		glVertex3f(posX,posY,posZ+size);
+		glVertex3f(posX+size,posY,posZ+size);
+		glVertex3f(posX+size,posY,posZ);
+		
+		glColor3f(1,0.70,1);
+		glVertex3f(posX,posY+size,posZ);
+		glVertex3f(posX,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ+size);
+		glVertex3f(posX+size,posY+size,posZ);
+		glEnd();
+	}
 	
-	texture1.getTexture(0, 0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX,posY,posZ+size);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX,posY+size,posZ+size);
-	texture1.getTexture(1, 1);
-    glVertex3f(posX,posY+size,posZ);
-	
-	texture1.getTexture(0, 0);
-    glVertex3f(posX+size,posY,posZ);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY,posZ+size);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY+size,posZ+size);
-	texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY+size,posZ);
-	
-	texture1.getTexture(0, 0);
-    glVertex3f(posX,posY,posZ);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX,posY,posZ+size);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY,posZ+size);
-	texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY,posZ);
-	
-	texture1.getTexture(0, 0);
-    glVertex3f(posX,posY+size,posZ);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX,posY+size,posZ+size);
-		texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY+size,posZ+size);
-	texture1.getTexture(1, 1);
-    glVertex3f(posX+size,posY+size,posZ);
-	
-  glEnd();
-  glPopMatrix();
+	  glPopMatrix();
 }
 
 void Display(void)
@@ -230,22 +277,35 @@ void onDisplay(){
   );
 
   //PLAYER==========================
-  gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM);
+  gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
 
   //CUBE_A======================== 
-  gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION);
+  gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	  gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
   
   //CUBE_B========================
-  gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION);
+  gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
   
   //CUBE_C========================
-  gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION);
+  gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
 
   //ETC_CUBES=====================
-  gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION);
-  gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION);
-  gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION);
-  gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION);
+  gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+  gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+  gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+  gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	
+  //ROOM==========================
+	gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
+	
+  //THE_SUN!!=====================
+	glPushMatrix();
+	glTranslatef(0.75, 10.0, -1.0);
+	glColor3f(1.0,1.0,0.0);
+	glutSolidSphere(1.0, 30, 30);
+	glColor3f(1, 1, 1);
+	glPopMatrix();
+  //SORRY, this is very hacky :(
   
   glLoadIdentity();
   glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);

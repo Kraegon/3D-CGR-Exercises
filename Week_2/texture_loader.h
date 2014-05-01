@@ -8,6 +8,7 @@ private:
 
 public:
     texture_loader(const char*);
-    void getTexture(int, int);
+    void getTexture(double, double);
     void initTexture(void);
+    void stashTexture(void);
 };

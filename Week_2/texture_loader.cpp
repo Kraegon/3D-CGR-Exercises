@@ -34,6 +34,7 @@ texture_loader::texture_loader(const char* fileName)
                  GL_UNSIGNED_BYTE,	//data type
                  imgData);		//data
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    stbi_image_free(imgData);
 }
 
 void texture_loader::initTexture(void)
@@ -42,12 +43,17 @@ void texture_loader::initTexture(void)
     glEnable(GL_TEXTURE_2D);
 }
 
-void texture_loader::getTexture(int x, int y)
+void texture_loader::getTexture(double x, double y)
 {
     if (x>1||y>1||x<0||y<0) {
         printf("I can't use values above 1 or below 0!");
     }
     else glTexCoord2f(x,y);
-
 }
+
+void texture_loader::stashTexture(void)
+{
+        glDisable(GL_TEXTURE_2D);
+}
+
 

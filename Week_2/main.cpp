@@ -104,7 +104,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
 	if (texture == DEFAULT_TEXTURE) {
-			texture_loader texture1(terrain);
+		texture_loader texture1(terrain);
 			texture1.initTexture();
 			glBegin(GL_QUADS);
 			
@@ -161,7 +161,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			glVertex3f(posX+size,posY+size,posZ+size);
 			texture1.getTexture(0.005, 0.005);
 			glVertex3f(posX+size,posY+size,posZ);
-			texture1.stashTexture();
+//		texture1.stashTexture();
 		glEnd();
 
 	}
@@ -169,37 +169,37 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 	{
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
-		glColor3f(1,1,1);
+//		glColor3f(1,1,1);
 		glVertex3f(posX,posY,posZ);
 		glVertex3f(posX,posY+size,posZ);
 		glVertex3f(posX+size,posY+size,posZ);
 		glVertex3f(posX+size,posY,posZ);
 		
-		glColor3f(1, 1, 1);
+//		glColor3f(1, 1, 1);
 		glVertex3f(posX,posY,posZ+size);
 		glVertex3f(posX,posY+size,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ+size);
 		glVertex3f(posX+size,posY,posZ+size);
 		
-		glColor3f(1,0.90,1);
+//		glColor3f(1,0.90,1);
 		glVertex3f(posX,posY,posZ);
 		glVertex3f(posX,posY,posZ+size);
 		glVertex3f(posX,posY+size,posZ+size);
 		glVertex3f(posX,posY+size,posZ);
 		
-		glColor3f(1,0.85,1);
+//		glColor3f(1,0.85,1);
 		glVertex3f(posX+size,posY,posZ);
 		glVertex3f(posX+size,posY,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ);
 		
-		glColor3f(1,0.80,1);
+//		glColor3f(1,0.80,1);
 		glVertex3f(posX,posY,posZ);
 		glVertex3f(posX,posY,posZ+size);
 		glVertex3f(posX+size,posY,posZ+size);
 		glVertex3f(posX+size,posY,posZ);
 		
-		glColor3f(1,0.70,1);
+//		glColor3f(1,0.70,1);
 		glVertex3f(posX,posY+size,posZ);
 		glVertex3f(posX,posY+size,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ+size);
@@ -276,6 +276,9 @@ void onDisplay(){
   0,1,0
   );
 
+//ROOM==========================
+   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
+	
   //PLAYER==========================
   gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
 
@@ -295,8 +298,6 @@ void onDisplay(){
   gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
   gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
 	
-  //ROOM==========================
-	gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
 	
   //THE_SUN!!=====================
 	glPushMatrix();

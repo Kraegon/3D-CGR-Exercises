@@ -53,7 +53,7 @@ void texture_loader::getTexture(double x, double y)
 
 void texture_loader::stashTexture(void)
 {
-        glDisable(GL_TEXTURE_2D);
+        glDeleteTextures(1, &textureId);
 }
 
 

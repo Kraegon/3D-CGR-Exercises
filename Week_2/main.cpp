@@ -109,58 +109,58 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			glColor3f(1, 1, 1);
 		glEnable(GL_TEXTURE_2D);
 			glBegin(GL_QUADS);
-			texture1.getTexture(0.000, 0.000);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX,posY,posZ);
 			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX,posY+size,posZ);
-			texture1.getTexture(0.000, 1.000);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ);
-			texture1.getTexture(1.000, 1.000);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX+size,posY,posZ);
 			
-			texture1.getTexture(0.000, 0.000);
-			glVertex3f(posX,posY,posZ+size);
-			texture1.getTexture(1.000, 0.000);
-			glVertex3f(posX,posY+size,posZ+size);
 			texture1.getTexture(0.000, 1.000);
+			glVertex3f(posX,posY,posZ+size);
+			texture1.getTexture(0.000, 0.000);
+			glVertex3f(posX,posY+size,posZ+size);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ+size);
 			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY,posZ+size);
-			
-			texture1.getTexture(0.000, 0.000);
-			glVertex3f(posX,posY,posZ);
-			texture1.getTexture(1.000, 0.000);
-			glVertex3f(posX,posY,posZ+size);
+
 			texture1.getTexture(0.000, 1.000);
-			glVertex3f(posX,posY+size,posZ+size);
+			glVertex3f(posX,posY,posZ);
 			texture1.getTexture(1.000, 1.000);
+			glVertex3f(posX,posY,posZ+size);
+			texture1.getTexture(1.000, 0.000);
+			glVertex3f(posX,posY+size,posZ+size);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY+size,posZ);
 			
-			texture1.getTexture(0.000, 0.000);
-			glVertex3f(posX+size,posY,posZ);
-			texture1.getTexture(1.000, 0.000);
-			glVertex3f(posX+size,posY,posZ+size);
-			texture1.getTexture(0.000, 1.000);
-			glVertex3f(posX+size,posY+size,posZ+size);
 			texture1.getTexture(1.000, 1.000);
+			glVertex3f(posX+size,posY,posZ);
+			texture1.getTexture(0.000, 1.000);
+			glVertex3f(posX+size,posY,posZ+size);
+			texture1.getTexture(0.000, 0.000);
+			glVertex3f(posX+size,posY+size,posZ+size);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ);
-			
-			texture1.getTexture(0.000, 0.000);
-			glVertex3f(posX,posY,posZ);
+
 			texture1.getTexture(0.000, 1.000);
+			glVertex3f(posX,posY,posZ);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY,posZ+size);
 			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY,posZ+size);
 			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY,posZ);
 			
-			texture1.getTexture(0.000, 0.000);
-			glVertex3f(posX,posY+size,posZ);
 			texture1.getTexture(0.000, 1.000);
+			glVertex3f(posX,posY+size,posZ);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX,posY+size,posZ+size);
 			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ+size);
-			texture1.getTexture(1.000, 1.000);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ);
 		glEnd();
 		texture1.stashTexture();

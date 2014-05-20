@@ -3,7 +3,7 @@ class texture_loader
 {
 private:
     int width, height, bpp, a;
-    int textureId;
+    GLuint textureId;
     std::string texturePath;
 
 public:

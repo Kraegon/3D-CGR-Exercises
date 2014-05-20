@@ -13,7 +13,7 @@
 #else
 #error "Your OS cannot compile this program!"
 #endif
-#include "texture_loader.h"
+#include "../include/texture_loader.h"
 #include <string>
 #include "stb_image.c"
 using namespace std;
@@ -38,8 +38,8 @@ void texture_loader::initTexture(void)
                  GL_RGBA,		//data format
                  GL_UNSIGNED_BYTE,	//data type
                  imgData);		//data
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     stbi_image_free(imgData);
     glBindTexture(GL_TEXTURE_2D, textureId);
     glEnable(GL_TEXTURE_2D);

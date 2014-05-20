@@ -9,7 +9,7 @@
 #include <stdlib.h> 
 #include <windows.h>
 #else
-#include <unistd.h> //Test compatibility of unistd.h's sleep with Apple systems
+#include <unistd.h>
 #endif
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -35,7 +35,7 @@
 #define NO_TEXTURE		5
 #define DEFAULT_TEXTURE 6
 
-#define AsRadian(x) (x*(M_PI/180.0f))
+#define AsRadian(x) ((x)*(M_PI/180.0f))
                                                         //One of these days we gotta split this.
 float rotation = 0.0f;                                  //Part of: cubes
 float eyeposVer = 1.2f; //In vertical plane: y          //Part of: camera
@@ -49,6 +49,7 @@ bool keys[256];     //Looks at regular keys             //Part of: keyboard
 bool rotating = true;                                   //Part of: cubes
 bool fullScreen = false;                                //Part of: keyboard?
 const char* terrain = "terrain.png";
+texture_loader texture1(terrain);
 
 void gfxDrawCube(float, float, float, float, int, int);
 void Display(void);
@@ -82,6 +83,7 @@ int main(int argc, char * argv[])
 	glutSpecialFunc (glutSpecial);
 	glutSpecialUpFunc (glutSpecialUp);
 	glutIdleFunc (IdleFunc);
+	texture1.initTexture();
 	glutMainLoop();
 }
 
@@ -104,102 +106,101 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
 	if (texture == DEFAULT_TEXTURE) {
-		texture_loader texture1(terrain);
-			texture1.initTexture();
+			glColor3f(1, 1, 1);
+		glEnable(GL_TEXTURE_2D);
 			glBegin(GL_QUADS);
-			
-			texture1.getTexture(0, 0);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY,posZ);
-			texture1.getTexture(0, 0.005);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX,posY+size,posZ);
-			texture1.getTexture(0.005, 0);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX+size,posY+size,posZ);
-			texture1.getTexture(0.005, 0.005);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY,posZ);
 			
-			texture1.getTexture(0, 0);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY,posZ+size);
-			texture1.getTexture(0, 0.005);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX,posY+size,posZ+size);
-			texture1.getTexture(0.005, 0);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX+size,posY+size,posZ+size);
-			texture1.getTexture(0.005, 0.005);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY,posZ+size);
 			
-			texture1.getTexture(0, 0);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY,posZ);
-			texture1.getTexture(0, 0.005);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX,posY,posZ+size);
-			texture1.getTexture(0.005, 0);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX,posY+size,posZ+size);
-			texture1.getTexture(0.005, 0.005);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX,posY+size,posZ);
 			
-			texture1.getTexture(0, 0);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX+size,posY,posZ);
-			texture1.getTexture(0, 0.005);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY,posZ+size);
-			texture1.getTexture(0.005, 0);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX+size,posY+size,posZ+size);
-			texture1.getTexture(0.005, 0.005);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY+size,posZ);
 			
-			texture1.getTexture(0, 0);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY,posZ);
-			texture1.getTexture(0.005, 0);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX,posY,posZ+size);
-			texture1.getTexture(0, 0.005);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY,posZ+size);
-			texture1.getTexture(0.005, 0.005);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY,posZ);
 			
-			texture1.getTexture(0, 0);
+			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX,posY+size,posZ);
-			texture1.getTexture(0.005, 0);
+			texture1.getTexture(0.000, 1.000);
 			glVertex3f(posX,posY+size,posZ+size);
-			texture1.getTexture(0, 0.005);
+			texture1.getTexture(1.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ+size);
-			texture1.getTexture(0.005, 0.005);
+			texture1.getTexture(1.000, 1.000);
 			glVertex3f(posX+size,posY+size,posZ);
-//		texture1.stashTexture();
 		glEnd();
+		texture1.stashTexture();
 
 	}
 	else if(texture == NO_TEXTURE)
 	{
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
-//		glColor3f(1,1,1);
+		glColor3f(1,1,1);
 		glVertex3f(posX,posY,posZ);
 		glVertex3f(posX,posY+size,posZ);
 		glVertex3f(posX+size,posY+size,posZ);
 		glVertex3f(posX+size,posY,posZ);
 		
-//		glColor3f(1, 1, 1);
+		glColor3f(1, 1, 1);
 		glVertex3f(posX,posY,posZ+size);
 		glVertex3f(posX,posY+size,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ+size);
 		glVertex3f(posX+size,posY,posZ+size);
 		
-//		glColor3f(1,0.90,1);
+		glColor3f(1,0.90,1);
 		glVertex3f(posX,posY,posZ);
 		glVertex3f(posX,posY,posZ+size);
 		glVertex3f(posX,posY+size,posZ+size);
 		glVertex3f(posX,posY+size,posZ);
 		
-//		glColor3f(1,0.85,1);
+		glColor3f(1,0.85,1);
 		glVertex3f(posX+size,posY,posZ);
 		glVertex3f(posX+size,posY,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ);
 		
-//		glColor3f(1,0.80,1);
+		glColor3f(1,0.80,1);
 		glVertex3f(posX,posY,posZ);
 		glVertex3f(posX,posY,posZ+size);
 		glVertex3f(posX+size,posY,posZ+size);
 		glVertex3f(posX+size,posY,posZ);
 		
-//		glColor3f(1,0.70,1);
+		glColor3f(1,0.70,1);
 		glVertex3f(posX,posY+size,posZ);
 		glVertex3f(posX,posY+size,posZ+size);
 		glVertex3f(posX+size,posY+size,posZ+size);
@@ -284,7 +285,7 @@ void onDisplay(){
 
   //CUBE_A======================== 
   gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	  gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+  gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
   
   //CUBE_B========================
   gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
@@ -351,10 +352,12 @@ void KeyboardIdle(double const &ticks){
       cameraCenterY = -10;
   }
   if(keys[97]){ //a
-    eyeposHor-=ticks/10; //Temporarily turn left, couldn't figure out strafing
+	  cameraCenterX -= factor * cos(AsRadian(eyeposHor - 90));       // Move left
+	  cameraCenterZ -= factor * sin(AsRadian(eyeposHor - 90));
   }
   if(keys[100]){ //d
-    eyeposHor+=ticks/10; //Temporarily turn left, couldn't figure out strafing
+	  cameraCenterX -= factor * cos(AsRadian(eyeposHor + 90));       // Move right
+	  cameraCenterZ -= factor * sin(AsRadian(eyeposHor + 90));
   }
   if(keys[119]){ //w
     cameraCenterX -= factor * cos(AsRadian(eyeposHor));       // Move forward

@@ -21,24 +21,26 @@ using namespace std;
 
 texture_loader::texture_loader(const char* fileName)
 {
+    texturePath = string(fileName);
+}
+
+void texture_loader::initTexture(void)
+{
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
-    unsigned char* imgData = stbi_load(fileName, &width, &height, &bpp, 4);
+    unsigned char* imgData = stbi_load(texturePath.c_str(), &width, &height, &bpp, 4);
     glTexImage2D(	GL_TEXTURE_2D,
                  0,		//level
                  GL_RGBA,		//internal format
-                 32,		//width
-                 32,		//height
+                 width,		//width
+                 height,		//height
                  0,		//border
                  GL_RGBA,		//data format
                  GL_UNSIGNED_BYTE,	//data type
                  imgData);		//data
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     stbi_image_free(imgData);
-}
-
-void texture_loader::initTexture(void)
-{
     glBindTexture(GL_TEXTURE_2D, textureId);
     glEnable(GL_TEXTURE_2D);
 }
@@ -53,7 +55,7 @@ void texture_loader::getTexture(double x, double y)
 
 void texture_loader::stashTexture(void)
 {
-        glDeleteTextures(1, &textureId);
+    glDisable(GL_TEXTURE_2D);
 }
 
 

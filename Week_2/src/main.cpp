@@ -83,6 +83,13 @@ int main(int argc, char * argv[])
 	glutSpecialFunc (glutSpecial);
 	glutSpecialUpFunc (glutSpecialUp);
 	glutIdleFunc (IdleFunc);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    glEnable(GL_FOG);
+    float FogCol[3]={1.0f,1.0f,1.0f};
+	glFogfv(GL_FOG_COLOR,FogCol);
+    glFogi(GL_FOG_MODE, GL_LINEAR);
+    glFogf(GL_FOG_START, 7.f);
+	glFogf(GL_FOG_END, 15.f);
 	texture1.initTexture();
 	glutMainLoop();
 }
@@ -278,7 +285,7 @@ void onDisplay(){
   );
 
 //ROOM==========================
-   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
+//   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
 	
   //PLAYER==========================
   gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
@@ -298,6 +305,11 @@ void onDisplay(){
   gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
   gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
   gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+    gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+    gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+    gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+    gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+    
 	
 	
   //THE_SUN!!=====================
@@ -309,6 +321,18 @@ void onDisplay(){
 	glPopMatrix();
   //SORRY, this is very hacky :(
   
+  //Ground=======================
+    glPushMatrix();
+    glBegin(GL_QUADS);
+    glColor3f(0.0, 0.0, 0.0);
+    glVertex3f(-1000.0,-1.0,-1000.0);
+    glVertex3f(1000,-1.0,-1000.0);
+    glVertex3f(1000.0,-1.0,1000.0);
+    glVertex3f(-1000.0,-1.0,1000.0);
+    glColor3f(1.0, 1.0, 1.0);
+    glEnd();
+    glPopMatrix();
+  //End of Ground================
   glLoadIdentity();
   glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
   glBegin(GL_LINE_LOOP);

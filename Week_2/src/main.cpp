@@ -25,7 +25,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <cstring>
+#include <vector>
 #include "../include/texture_loader.h"
+#include "../include/ObjModel.h"
 
 #define NO_ROTATION     0
 #define X_AXIS_ROTATION 1
@@ -51,6 +53,9 @@ bool fullScreen = false;                                //Part of: keyboard?
 const char* terrain = "terrain.png";
 texture_loader texture1(terrain);
 
+std::vector<std::pair<int, ObjModel*> > models;
+int currentModel = 0;
+
 void gfxDrawCube(float, float, float, float, int, int);
 void Display(void);
 void Reshape(GLint, GLint);
@@ -59,7 +64,7 @@ void MouseButton(int, int, int, int);
 void MouseMotion(int, int);
 void glutSpecial(int, int, int);
 void glutSpecialUp(int, int, int);
-void Keyboard(unsigned char, int, int);
+//void Keyboard(unsigned char, int, int);
 void onDisplay();
 void rSleep(int);
 void IdleFunc(void);
@@ -74,6 +79,12 @@ int main(int argc, char * argv[])
 	glutCreateWindow("Hello Guus & Julian");
 	printf("Program started!\n");
 	InitGraphics();
+		//Models 'borrowed' from Johan
+		//models.push_back(pair<int, ObjModel*>(75, new ObjModel("models/car/honda_jazz.obj")));	//Too large!
+		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/bloemetje/PrimroseP.obj")));
+		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/cube/cube-textures.obj")));
+		//models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));	//Too large!
+		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/normalstuff/normaltest2.obj")));
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
 	glutKeyboardFunc (glutKeyboard);
@@ -85,6 +96,9 @@ int main(int argc, char * argv[])
 	glutIdleFunc (IdleFunc);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glEnable(GL_FOG);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_COLOR_MATERIAL);
     float FogCol[3]={1.0f,1.0f,1.0f};
 	glFogfv(GL_FOG_COLOR,FogCol);
     glFogi(GL_FOG_MODE, GL_LINEAR);
@@ -116,6 +130,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			glColor3f(1, 1, 1);
 		glEnable(GL_TEXTURE_2D);
 			glBegin(GL_QUADS);
+			glNormal3f(0.0f,0.0f,-1.0f);
 			texture1.getTexture(0.248, 0.062);
 			glVertex3f(posX,posY,posZ);
 			texture1.getTexture(0.248, 0.000);
@@ -125,6 +140,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			texture1.getTexture(0.186, 0.062);
 			glVertex3f(posX+size,posY,posZ);
 			
+			glNormal3f(0.0f,0.0f,1.0f);
 			texture1.getTexture(0.186, 0.062);
 			glVertex3f(posX,posY,posZ+size);
 			texture1.getTexture(0.186, 0.000);
@@ -134,6 +150,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			texture1.getTexture(0.248, 0.062);
 			glVertex3f(posX+size,posY,posZ+size);
 
+			glNormal3f(-1.0f,0.0f,0.0f);
 			texture1.getTexture(0.186, 0.062);
 			glVertex3f(posX,posY,posZ);
 			texture1.getTexture(0.248, 0.062);
@@ -143,6 +160,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			texture1.getTexture(0.186, 0.000);
 			glVertex3f(posX,posY+size,posZ);
 			
+			glNormal3f(1.0f,0.0f,0.0f);
 			texture1.getTexture(0.248, 0.062);
 			glVertex3f(posX+size,posY,posZ);
 			texture1.getTexture(0.186, 0.062);
@@ -152,6 +170,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			texture1.getTexture(0.248, 0.000);
 			glVertex3f(posX+size,posY+size,posZ);
 
+			glNormal3f(0.0f,-1.0f,0.0f);
 			texture1.getTexture(0.124, 0.062);
 			glVertex3f(posX,posY,posZ);
 			texture1.getTexture(0.124, 0.000);
@@ -161,6 +180,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			texture1.getTexture(0.186, 0.062);
 			glVertex3f(posX+size,posY,posZ);
 			
+			glNormal3f(0.0f,1.0f,0.0f);
 			texture1.getTexture(0.000, 0.062);
 			glVertex3f(posX,posY+size,posZ);
 			texture1.getTexture(0.062, 0.062);
@@ -268,81 +288,91 @@ void glutKeyboard(unsigned char key, int x, int y)
 }
 
 void onDisplay(){ 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
 
-  gluLookAt(
-  //Eye
-  cameraCenterX + (eyeposVer*cos(AsRadian(eyeposHor))),
-  eyeposVer,
-  cameraCenterZ + (eyeposVer*sin(AsRadian(eyeposHor))),
-  //Center
-  cameraCenterX,
-  cameraCenterY,
-  cameraCenterZ,
-  //Up
-  0,1,0
-  );
+	gluLookAt(
+	//Eye
+	cameraCenterX + (eyeposVer*cos(AsRadian(eyeposHor))),
+	eyeposVer,
+	cameraCenterZ + (eyeposVer*sin(AsRadian(eyeposHor))),
+	//Center
+	cameraCenterX,
+	cameraCenterY,
+	cameraCenterZ,
+	//Up
+	0,1,0
+	);
 
-//ROOM==========================
-//   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
+	//ROOM==========================
+	//   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
+
+	//PLAYER==========================
+	gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
+
+	//CUBE_A========================
+	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+
+	//CUBE_B========================
+	gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+
+	//CUBE_C========================
+	gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+
+	//ETC_CUBES=====================
+	gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
 	
-  //PLAYER==========================
-  gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
-
-  //CUBE_A======================== 
-  gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-  gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-  
-  //CUBE_B========================
-  gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-  
-  //CUBE_C========================
-  gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-
-  //ETC_CUBES=====================
-  gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-  gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-  gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-  gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-    gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-    gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-    gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-    gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-    
 	
 	
-  //THE_SUN!!=====================
+	//THE_SUN!!=====================
 	glPushMatrix();
 	glTranslatef(0.75, 10.0, -1.0);
 	glColor3f(1.0,1.0,0.0);
 	glutSolidSphere(1.0, 30, 30);
 	glColor3f(1, 1, 1);
 	glPopMatrix();
-  //SORRY, this is very hacky :(
-  
-  //Ground=======================
-    glPushMatrix();
-    glBegin(GL_QUADS);
-    glColor3f(0.0, 0.0, 0.0);
-    glVertex3f(-1000.0,-1.0,-1000.0);
-    glVertex3f(1000,-1.0,-1000.0);
-    glVertex3f(1000.0,-1.0,1000.0);
-    glVertex3f(-1000.0,-1.0,1000.0);
-    glColor3f(1.0, 1.0, 1.0);
-    glEnd();
-    glPopMatrix();
-  //End of Ground================
-  glLoadIdentity();
-  glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
-  glBegin(GL_LINE_LOOP);
-  glVertex2f(5, 5);
-  glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
-  glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-  glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-  glEnd();
-    
-  glutSwapBuffers();
+	GLfloat sunpos[] = {0.75, 10.0, -1.0,1.0};
+	glLightfv(GL_LIGHT0, GL_POSITION, sunpos);
+	//SORRY, this is very hacky :(
+
+	//Ground=======================
+	glPushMatrix();
+	glBegin(GL_QUADS);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex3f(-1000.0,-1.0,-1000.0);
+	glVertex3f(1000,-1.0,-1000.0);
+	glVertex3f(1000.0,-1.0,1000.0);
+	glVertex3f(-1000.0,-1.0,1000.0);
+	glColor3f(1.0, 1.0, 1.0);
+	glEnd();
+	glPopMatrix();
+	//End of Ground================
+
+	//Loaded complex mesh object===
+	glPushMatrix();
+	glTranslatef(5,0,5);
+	models[currentModel].second->draw();
+	glPopMatrix();
+	//End of loaded object=========
+
+	glLoadIdentity();
+	glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(5, 5);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+	glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
+	glEnd();
+
+	glutSwapBuffers();
 }
 
 //Meaning: redefined sleep 

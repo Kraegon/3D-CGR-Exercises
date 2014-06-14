@@ -8,7 +8,7 @@
 #include <GLUT/glut.h>
 #elif _WIN32
 #include <glut.h>
-#elif  __gnu_linux__
+#elif __gnu_linux__
 #include <GL/glut.h>
 #else
 #error "Your OS cannot compile this program!"
@@ -22,6 +22,10 @@ using namespace std;
 texture_loader::texture_loader(const char* fileName)
 {
     texturePath = string(fileName);
+}
+texture_loader::texture_loader()
+{
+	texturePath = ""; //Call should be avoided by texture == false in obj
 }
 
 void texture_loader::initTexture(void)

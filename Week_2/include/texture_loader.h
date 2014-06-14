@@ -1,4 +1,5 @@
 #include <string>
+
 class texture_loader
 {
 private:
@@ -8,6 +9,7 @@ private:
 
 public:
     texture_loader(const char*);
+    texture_loader();
     void getTexture(double, double);
     void initTexture(void);
     void stashTexture(void);

@@ -9,6 +9,12 @@ RM := rm
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include src/subdir.mk
+-include models/ship/subdir.mk
+-include models/normalstuff/subdir.mk
+-include models/cube/subdir.mk
+-include models/car/subdir.mk
+-include models/bloemetje/subdir.mk
+-include models/baksteen/subdir.mk
 -include subdir.mk
 -include objects.mk
 

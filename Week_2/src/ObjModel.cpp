@@ -2,7 +2,9 @@
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #elif _WIN32
-#include <glut.h>
+#include "glut.h" //Requires adding glut.h to solution
+#include <functional>
+#include <locale>  
 #elif  __gnu_linux__
 #include <GL/glut.h>
 #else
@@ -12,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
 
 std::string replace(std::string str, std::string toReplace, std::string replacement)
 {
@@ -49,10 +52,28 @@ inline std::string toLower(std::string data)
 	return data;
 }
 
-static inline std::string &trim(std::string &s) {
-	 s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-     s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));;
-     return s;
+// Extensions for std::string to trim whitespace
+string& trimR(string& str)
+{
+	if (!str.size()) return str;
+	// find the last whitespace chr, then delete from there to end.
+	string::iterator iter = --str.end();
+	while (isspace(*iter)) --iter;
+	str.erase(++iter, str.end());
+	return str;
+}
+string& trimL(string& str)
+{
+	if (!str.size()) return str;
+	// find first non-whitespace, then delete from begin to there.
+	string::iterator iter = str.begin();
+	while (iter != str.end() && isspace(*iter)) ++iter;
+	str.erase(str.begin(), iter);
+	return str;
+}
+string& trim(string& str)
+{
+	return trimR(trimL(str));
 }
 
 
@@ -82,7 +103,7 @@ ObjModel::ObjModel(std::string fileName)
 	{
 		std::string line;
 		std::getline(pFile, line);
-		usleep(10);
+
 		line = replace(line, "\t", " ");
 		while(line.find("  ") != std::string::npos)
 			line = replace(line, "  ", " ");

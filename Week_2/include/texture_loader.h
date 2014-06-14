@@ -1,10 +1,12 @@
+#ifndef TEXTURE_LOADER_H_
+#define TEXTURE_LOADER_H_
 #include <string>
 
 class texture_loader
 {
 private:
     int width, height, bpp, a;
-    GLuint textureId;
+    unsigned int textureId;
     std::string texturePath;
 
 public:
@@ -14,3 +16,5 @@ public:
     void initTexture(void);
     void stashTexture(void);
 };
+
+#endif

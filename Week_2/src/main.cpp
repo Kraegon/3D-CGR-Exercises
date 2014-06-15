@@ -82,11 +82,11 @@ int main(int argc, char * argv[])
 	printf("Programme started!\n");
 	InitGraphics();
 		//Models 'borrowed' from Johan
-//		models.push_back(pair<int, ObjModel*>(75, new ObjModel("models/car/honda_jazz.obj")));	//Too large!
-		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/bloemetje/PrimroseP.obj")));
-//		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/cube/cube-textures.obj")));
-//		models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));	//Too large!
-//		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/normalstuff/normaltest2.obj")));
+		//models.push_back(pair<int, ObjModel*>(75, new ObjModel("models/car/honda_jazz.obj")));	//Too large!
+		models.push_back(std::pair<int, ObjModel*>(1, new ObjModel("models/bloemetje/PrimroseP.obj")));
+		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/cube/cube-textures.obj")));
+		//models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));	//Too large!
+		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/normalstuff/normaltest2.obj")));
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
 	glutKeyboardFunc (glutKeyboard);

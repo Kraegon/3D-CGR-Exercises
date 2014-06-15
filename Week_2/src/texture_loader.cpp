@@ -19,9 +19,9 @@
 using namespace std;
 
 
-texture_loader::texture_loader(const char* fileName)
+texture_loader::texture_loader(std::string fileName)
 {
-    texturePath = string(fileName);
+    texturePath = fileName;
 }
 texture_loader::texture_loader()
 {

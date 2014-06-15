@@ -50,7 +50,7 @@ bool specKeys[256]; //Looks at special keys             //Part of: keyboard
 bool keys[256];     //Looks at regular keys             //Part of: keyboard
 bool rotating = true;                                   //Part of: cubes
 bool fullScreen = false;                                //Part of: keyboard?
-const char* terrain = "terrain.png";
+std::string terrain = "terrain.png";
 texture_loader texture1(terrain);
 
 std::vector<std::pair<int, ObjModel*> > models;
@@ -77,14 +77,14 @@ int main(int argc, char * argv[])
 	glutInitWindowSize(800, 600);
 	glutInit(&argc, argv);
 	glutCreateWindow("Hello Guus & Julian");
-	printf("Program started!\n");
+	printf("Programme started!\n");
 	InitGraphics();
 		//Models 'borrowed' from Johan
-		//models.push_back(pair<int, ObjModel*>(75, new ObjModel("models/car/honda_jazz.obj")));	//Too large!
+//		models.push_back(pair<int, ObjModel*>(75, new ObjModel("models/car/honda_jazz.obj")));	//Too large!
 		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/bloemetje/PrimroseP.obj")));
-		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/cube/cube-textures.obj")));
-		//models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));	//Too large!
-		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/normalstuff/normaltest2.obj")));
+//		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/cube/cube-textures.obj")));
+//		models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));	//Too large!
+//		models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/normalstuff/normaltest2.obj")));
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
 	glutKeyboardFunc (glutKeyboard);

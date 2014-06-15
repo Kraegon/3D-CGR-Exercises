@@ -14,16 +14,17 @@
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #elif _WIN32
-#include <glut.h>
+#include "glut.h"
 #elif  __gnu_linux__
 #include <GL/glut.h>
 #else
 #error "Your OS cannot compile this program!"
 #endif
 
+#define _USE_MATH_DEFINES
 #include <iostream>
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 #include <cstring>
 #include <vector>
 #include "../include/texture_loader.h"
@@ -36,6 +37,7 @@
 #define FOLLOW_CAM      4
 #define NO_TEXTURE		5
 #define DEFAULT_TEXTURE 6
+
 
 #define AsRadian(x) ((x)*(M_PI/180.0f))
                                                         //One of these days we gotta split this.
@@ -375,12 +377,12 @@ void onDisplay(){
 	glutSwapBuffers();
 }
 
-//Meaning: redefined sleep 
+//Meaning: redefined sleep
 void rSleep(int millisec){
 #ifdef _WIN32
-  Sleep(millisec);
+	Sleep(millisec);
 #else
-  usleep(millisec);
+	usleep(millisec);
 #endif
 }
 

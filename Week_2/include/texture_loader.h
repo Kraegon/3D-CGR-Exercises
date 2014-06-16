@@ -1,5 +1,3 @@
-#ifndef TEXTURE_LOADER_H_
-#define TEXTURE_LOADER_H_
 #include <string>
 #ifndef texture_loader_h
 #define texture_loader_h
@@ -18,3 +16,4 @@ public:
     void stashTexture(void);
 };
 #endif
+

@@ -20,7 +20,7 @@
 #else
 #error "Your OS cannot compile this program!"
 #endif
-
+#define AsRadian(x) ((x)*(M_PI/180.0f))
 #define _USE_MATH_DEFINES
 #include <iostream>
 #include <stdio.h>
@@ -29,6 +29,8 @@
 #include <vector>
 #include "../include/texture_loader.h"
 #include "../include/ObjModel.h"
+#include "Keyboard.h"
+#include "Camera.h"
 
 #define NO_ROTATION     0
 #define X_AXIS_ROTATION 1
@@ -37,21 +39,10 @@
 #define FOLLOW_CAM      4
 #define NO_TEXTURE		5
 #define DEFAULT_TEXTURE 6
-
-
-#define AsRadian(x) ((x)*(M_PI/180.0f))
-                                                        //One of these days we gotta split this.
+                                                        //One of these days we gotta split this. This is in progress right now :D
 float rotation = 0.0f;                                  //Part of: cubes
-float eyeposVer = 1.2f; //In vertical plane: y          //Part of: camera
-float eyeposHor = 0.0f; //In horizontal plane: x and z  //Part of: camera
-float cameraCenterX = 0.0f;                             //Part of: camera
-float cameraCenterY = 0.0f;                             //Part of: camera
-float cameraCenterZ = 0.0f;                             //Part of: camera
 int lastTick = 0;                                       //Part of: refreshing
-bool specKeys[256]; //Looks at special keys             //Part of: keyboard
-bool keys[256];     //Looks at regular keys             //Part of: keyboard
-bool rotating = true;                                   //Part of: cubes
-bool fullScreen = false;                                //Part of: keyboard?
+
 std::string terrain = "terrain.png";
 texture_loader texture1(terrain);
 
@@ -70,8 +61,7 @@ void glutSpecialUp(int, int, int);
 void onDisplay();
 void rSleep(int);
 void IdleFunc(void);
-void glutKeyboardUp(unsigned char, int, int);
-void glutKeyboard(unsigned char, int, int);
+Camera camera;
 
 int main(int argc, char * argv[])
 {
@@ -124,7 +114,7 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
       glRotatef(rotation,0,0,1);
         break;
       case 4:
-      glRotatef(-eyeposHor,0,1,0);
+      glRotatef(-camera.getEyeposHor(),0,1,0);
         break;
     }
   glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
@@ -269,48 +259,29 @@ void MouseMotion(int x, int y)
 
 }
 
-void glutSpecial(int key, int x, int y)
-{
-  specKeys[key] = true;
-}
 
-void glutSpecialUp(int key, int x, int y)
-{
-  specKeys[key] = false;
-}
-
-void glutKeyboardUp(unsigned char key, int x, int y)
-{
-  keys[key] = false;
-}
-
-void glutKeyboard(unsigned char key, int x, int y)
-{
-  keys[key] = true;  
-}
 
 void onDisplay(){ 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-
-	gluLookAt(
-	//Eye
-	cameraCenterX + (eyeposVer*cos(AsRadian(eyeposHor))),
-	eyeposVer,
-	cameraCenterZ + (eyeposVer*sin(AsRadian(eyeposHor))),
-	//Center
-	cameraCenterX,
-	cameraCenterY,
-	cameraCenterZ,
-	//Up
-	0,1,0
-	);
+    gluLookAt(
+              //Eye
+              camera.getCameraCenterX() + (camera.getEyeposVer()*cos(AsRadian(camera.getEyeposHor()))),
+              camera.getEyeposVer(),
+              camera.getCameraCenterZ() + (camera.getEyeposVer()*sin(AsRadian(camera.getEyeposHor()))),
+              //Center
+              camera.getCameraCenterX(),
+              camera.getCameraCenterY(),
+              camera.getCameraCenterZ(),
+              //Up
+              0,1,0
+              );
 
 	//ROOM==========================
 	//   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
 
 	//PLAYER==========================
-	gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
+	gfxDrawCube(camera.getCameraCenterX()-0.25, -0.5, camera.getCameraCenterZ()-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
 
 	//CUBE_A========================
 	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
@@ -386,79 +357,12 @@ void rSleep(int millisec){
 #endif
 }
 
-void KeyboardIdle(double const &ticks){
-  double factor = 0.1;
-  eyeposHor = fmod(eyeposHor, 360.0f);
-  if(specKeys[GLUT_KEY_RIGHT])
-  {      
-    eyeposHor+=ticks/10;  //Rotate around center, right
-  }
-  if(specKeys[GLUT_KEY_LEFT])
-  {
-    eyeposHor-=ticks/10;  //Rotate around center, left
-  }
-  if(specKeys[GLUT_KEY_UP]){
-    cameraCenterY += 0.1f; //Lookup
-    if(cameraCenterY > 10)
-      cameraCenterY = 10;
-  }
-  if(specKeys[GLUT_KEY_DOWN]){
-    cameraCenterY -= 0.1f; //Lookdown
-    if(cameraCenterY < -10)
-      cameraCenterY = -10;
-  }
-  if(keys[97]){ //a
-	  cameraCenterX -= factor * cos(AsRadian(eyeposHor - 90));       // Move left
-	  cameraCenterZ -= factor * sin(AsRadian(eyeposHor - 90));
-  }
-  if(keys[100]){ //d
-	  cameraCenterX -= factor * cos(AsRadian(eyeposHor + 90));       // Move right
-	  cameraCenterZ -= factor * sin(AsRadian(eyeposHor + 90));
-  }
-  if(keys[119]){ //w
-    cameraCenterX -= factor * cos(AsRadian(eyeposHor));       // Move forward
-    cameraCenterZ -= factor * sin(AsRadian(eyeposHor));
-  }
-  if(keys[115]){ //s
-    cameraCenterX += factor * cos(AsRadian(eyeposHor));       // Move backwards
-    cameraCenterZ += factor * sin(AsRadian(eyeposHor));
-  }
-  if(keys[113]){ //q
-    eyeposVer+=ticks/100; //Zoom out
-  }
-  if(keys[101]){ //e
-    eyeposVer-=ticks/100;
-    if(eyeposVer <= 0.5)
-      eyeposVer = 0.5;  //Zoom in
-  }
-  if(keys[6]){  //ctrl+f
-    if(fullScreen){
-      glutReshapeWindow(800, 600);            // Restore to window
-      glutPositionWindow(0,0);
-      fullScreen = !fullScreen;
-    }
-    else
-    {
-      glutFullScreen();                       // FullScreen glory
-      fullScreen = !fullScreen;
-    }
-  }
-  if(keys[112]){ //p
-    rotating = !rotating;
-  }  
-  if(keys[27]){ //ESCAPE
-    exit(0);
-  }
-}   
-
 void IdleFunc(void)
 {
   int timeNow = glutGet(GLUT_ELAPSED_TIME);
   double ticks = (timeNow - lastTick);
-  if (rotating) {
     rotation += ticks/10;
-  }
-  KeyboardIdle(ticks);
+  KeyboardIdle(ticks, camera);
   lastTick = timeNow;
   rSleep(ticks/10);
   glutPostRedisplay();

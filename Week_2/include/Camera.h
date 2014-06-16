@@ -11,4 +11,29 @@
 
 #include <iostream>
 
+class Camera
+{
+private:
+    float eyeposVer = 1.2f; //In vertical plane: y          //Part of: camera
+    float eyeposHor = 0.0f; //In horizontal plane: x and z  //Part of: camera
+    float cameraCenterX = 0.0f;                             //Part of: camera
+    float cameraCenterY = 0.0f;                             //Part of: camera
+    float cameraCenterZ = 0.0f;                             //Part of: camera
+    
+public:
+    Camera(void);
+    float getEyeposHor(void);
+    float getEyeposVer(void);
+    float getCameraCenterX(void);
+    float getCameraCenterY(void);
+    float getCameraCenterZ(void);
+    void setEyeposHor(float);
+    void setEyeposVer(float);
+    void setCameraCenterX(float);
+    void setCameraCenterY(float);
+    void setCameraCenterZ(float);
+};
+
+
+
 #endif /* defined(__OpdrachtenWeek1__Camera__) */

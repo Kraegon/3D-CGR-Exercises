@@ -4,16 +4,25 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/Camera.cpp \
+../src/Keyboard.cpp \
+../src/Level.cpp \
 ../src/ObjModel.cpp \
 ../src/main.cpp \
 ../src/texture_loader.cpp 
 
 OBJS += \
+./src/Camera.o \
+./src/Keyboard.o \
+./src/Level.o \
 ./src/ObjModel.o \
 ./src/main.o \
 ./src/texture_loader.o 
 
 CPP_DEPS += \
+./src/Camera.d \
+./src/Keyboard.d \
+./src/Level.d \
 ./src/ObjModel.d \
 ./src/main.d \
 ./src/texture_loader.d 

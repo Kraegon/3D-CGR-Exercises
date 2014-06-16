@@ -12,6 +12,6 @@ newmtl Material__1
 	Kd 1.0000 1.0000 1.0000
 	Ks 1.0000 1.0000 1.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka tex/Jazz_diffuse.jpg
-	map_Kd tex/Jazz_diffuse.jpg
-	map_d tex/Jazz_opacity.jpg
+	map_Ka tex\Jazz_diffuse.jpg
+	map_Kd tex\Jazz_diffuse.jpg
+	map_d tex\Jazz_opacity.jpg

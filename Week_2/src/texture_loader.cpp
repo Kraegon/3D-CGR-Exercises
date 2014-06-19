@@ -23,7 +23,7 @@ texture_loader::texture_loader(std::string fileName)
 {
     texturePath = fileName;
 }
-texture_loader::texture_loader()
+texture_loader::texture_loader(void)
 {
 texturePath = ""; //Call should be avoided by texture == false in obj
 }
@@ -33,7 +33,7 @@ void texture_loader::initTexture(void)
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
     unsigned char* imgData = stbi_load(texturePath.c_str(), &width, &height, &bpp, 4);
-    glTexImage2D(	GL_TEXTURE_2D,
+    glTexImage2D(GL_TEXTURE_2D,
                  0,	//level
                  GL_RGBA,	//internal format
                  width,	//width
@@ -43,10 +43,15 @@ void texture_loader::initTexture(void)
                  GL_UNSIGNED_BYTE,	//data type
                  imgData);	//data
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     stbi_image_free(imgData);
-    //glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
     glEnable(GL_TEXTURE_2D);
+}
+
+void texture_loader::bindTexture(void)
+{
+    glBindTexture(GL_TEXTURE_2D, textureId);
 }
 
 void texture_loader::getTexture(double x, double y)

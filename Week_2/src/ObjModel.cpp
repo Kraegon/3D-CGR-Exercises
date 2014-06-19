@@ -197,8 +197,12 @@ void ObjModel::draw()
 	for(ObjGroup *group: groups){
 		//Set material, probably glMaterial or something
 		if(materials[group->materialIndex]->hasTexture){
-			materials[group->materialIndex]->texture.initTexture();
+			materials[group->materialIndex]->texture.bindTexture();
 		}
+        else
+        {
+            materials[group->materialIndex]->texture.stashTexture();
+        }
 		glBegin(GL_TRIANGLES);
 		for(Face f : group->faces){
 			for(std::list<Vertex>::iterator it = f.vertices.begin(); it != f.vertices.end(); ++it){
@@ -208,9 +212,7 @@ void ObjModel::draw()
 			}
 		}
 		glEnd();
-		if(materials[group->materialIndex]->hasTexture){
-			materials[group->materialIndex]->texture.stashTexture();
-		}
+
 	}
 }
 
@@ -273,6 +275,9 @@ void ObjModel::loadMaterialFile( std::string fileName, std::string dirName )
 			texPath = replace(texPath, "\\", "/");
 			trimR(texPath);
 			currentMaterial->texture = texture_loader(texPath);
+            std::cout << texPath << std::endl;
+            currentMaterial->texture.initTexture();
+            std::cout << "Initialised" << std::endl;
 		}
 		else
 			std::cout<<"Didn't parse "<<params[0]<<" in material file"<<std::endl;

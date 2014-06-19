@@ -10,9 +10,10 @@ private:
 
 public:
     texture_loader(std::string);
-    texture_loader();
+    texture_loader(void);
     void getTexture(double, double);
     void initTexture(void);
     void stashTexture(void);
+    void bindTexture(void);
 };
 #endif

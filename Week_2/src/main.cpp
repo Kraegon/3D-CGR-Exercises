@@ -73,6 +73,7 @@ void IdleFunc(void);
 void glutKeyboardUp(unsigned char, int, int);
 void glutKeyboard(unsigned char, int, int);
 
+
 int main(int argc, char * argv[])
 {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -111,6 +112,8 @@ int main(int argc, char * argv[])
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
+    texture1.initTexture();
+    skyTex.initTexture();
     /*glEnable(GL_FOG);
     float FogCol[3]={1.0f,1.0f,1.0f};
 	glFogfv(GL_FOG_COLOR,FogCol);
@@ -123,74 +126,74 @@ int main(int argc, char * argv[])
 
 void gfxSkyBox(){ //COPY PASTE COPY PASTE IT IS THE ONLY WAY
 	float posX = -125, posY=-125, posZ=-125, size = 250;
-    skyTex.initTexture();
+    skyTex.bindTexture();
   	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 				glBegin(GL_QUADS);
 				glNormal3f(0.0f,0.0f,1.0f);
-				texture1.getTexture(1.0, 0.062);
+				skyTex.getTexture(1.0, 0.062);
 				glVertex3f(posX,posY,posZ);
-				texture1.getTexture(1.0, 0.000);
+				skyTex.getTexture(1.0, 0.000);
 				glVertex3f(posX,posY+size,posZ);
-				texture1.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.5, 0.000);
 				glVertex3f(posX+size,posY+size,posZ);
-				texture1.getTexture(0.5, 1.0);
+				skyTex.getTexture(0.5, 1.0);
 				glVertex3f(posX+size,posY,posZ);
 
 				glNormal3f(0.0f,0.0f,-1.0f);
-				texture1.getTexture(0.5, 1.0);
+				skyTex.getTexture(0.5, 1.0);
 				glVertex3f(posX,posY,posZ+size);
-				texture1.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.5, 0.000);
 				glVertex3f(posX,posY+size,posZ+size);
-				texture1.getTexture(1.0, 0.000);
+				skyTex.getTexture(1.0, 0.000);
 				glVertex3f(posX+size,posY+size,posZ+size);
-				texture1.getTexture(1.0, 1.0);
+				skyTex.getTexture(1.0, 1.0);
 				glVertex3f(posX+size,posY,posZ+size);
 
 				glNormal3f(1.0f,0.0f,0.0f);
-				texture1.getTexture(0.5, 1.0);
+				skyTex.getTexture(0.5, 1.0);
 				glVertex3f(posX,posY,posZ);
-				texture1.getTexture(1.0, 1.0);
+				skyTex.getTexture(1.0, 1.0);
 				glVertex3f(posX,posY,posZ+size);
-				texture1.getTexture(1.0, 0.000);
+				skyTex.getTexture(1.0, 0.000);
 				glVertex3f(posX,posY+size,posZ+size);
-				texture1.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.5, 0.000);
 				glVertex3f(posX,posY+size,posZ);
 
 				glNormal3f(-1.0f,0.0f,0.0f);
-				texture1.getTexture(1.0, 1.0);
+				skyTex.getTexture(1.0, 1.0);
 				glVertex3f(posX+size,posY,posZ);
-				texture1.getTexture(0.5, 1.0);
+				skyTex.getTexture(0.5, 1.0);
 				glVertex3f(posX+size,posY,posZ+size);
-				texture1.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.5, 0.000);
 				glVertex3f(posX+size,posY+size,posZ+size);
-				texture1.getTexture(1.0, 0.000);
+				skyTex.getTexture(1.0, 0.000);
 				glVertex3f(posX+size,posY+size,posZ);
 
 				glNormal3f(0.0f,1.0f,0.0f);
-				texture1.getTexture(0.5, 0.062);
+				skyTex.getTexture(0.5, 0.062);
 				glVertex3f(posX,posY,posZ);
-				texture1.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.5, 0.000);
 				glVertex3f(posX,posY,posZ+size);
-				texture1.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.5, 0.000);
 				glVertex3f(posX+size,posY,posZ+size);
-				texture1.getTexture(0.5, 1.0);
+				skyTex.getTexture(0.5, 1.0);
 				glVertex3f(posX+size,posY,posZ);
 
 				glNormal3f(0.0f,-1.0f,0.0f);
-				texture1.getTexture(0.000, 1.0);
+				skyTex.getTexture(0.000, 1.0);
 				glVertex3f(posX,posY+size,posZ);
-				texture1.getTexture(1.0, 1.0);
+				skyTex.getTexture(1.0, 1.0);
 				glVertex3f(posX,posY+size,posZ+size);
-				texture1.getTexture(1.0, 0.000);
+				skyTex.getTexture(1.0, 0.000);
 				glVertex3f(posX+size,posY+size,posZ+size);
-				texture1.getTexture(0.000, 0.000);
+				skyTex.getTexture(0.000, 0.000);
 				glVertex3f(posX+size,posY+size,posZ);
 			glEnd();
 }
 
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int texture){
-  texture1.initTexture();
+  texture1.bindTexture();
   glPushMatrix();
     glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
     switch(angle){
@@ -275,47 +278,6 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 		texture1.stashTexture();
 
 	}
-	else if(texture == NO_TEXTURE)
-	{
-		glColor3f(1, 1, 1);
-		glBegin(GL_QUADS);
-		glColor3f(1,1,1);
-		glVertex3f(posX,posY,posZ);
-		glVertex3f(posX,posY+size,posZ);
-		glVertex3f(posX+size,posY+size,posZ);
-		glVertex3f(posX+size,posY,posZ);
-		
-		glColor3f(1, 1, 1);
-		glVertex3f(posX,posY,posZ+size);
-		glVertex3f(posX,posY+size,posZ+size);
-		glVertex3f(posX+size,posY+size,posZ+size);
-		glVertex3f(posX+size,posY,posZ+size);
-		
-		glColor3f(1,0.90,1);
-		glVertex3f(posX,posY,posZ);
-		glVertex3f(posX,posY,posZ+size);
-		glVertex3f(posX,posY+size,posZ+size);
-		glVertex3f(posX,posY+size,posZ);
-		
-		glColor3f(1,0.85,1);
-		glVertex3f(posX+size,posY,posZ);
-		glVertex3f(posX+size,posY,posZ+size);
-		glVertex3f(posX+size,posY+size,posZ+size);
-		glVertex3f(posX+size,posY+size,posZ);
-		
-		glColor3f(1,0.80,1);
-		glVertex3f(posX,posY,posZ);
-		glVertex3f(posX,posY,posZ+size);
-		glVertex3f(posX+size,posY,posZ+size);
-		glVertex3f(posX+size,posY,posZ);
-		
-		glColor3f(1,0.70,1);
-		glVertex3f(posX,posY+size,posZ);
-		glVertex3f(posX,posY+size,posZ+size);
-		glVertex3f(posX+size,posY+size,posZ+size);
-		glVertex3f(posX+size,posY+size,posZ);
-		glEnd();
-	}
 	
 	  glPopMatrix();
 }
@@ -399,29 +361,29 @@ void onDisplay(){
 	glPopMatrix();
 	//End of loaded object=========
 
-	//CUBE_A========================
-	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-
-	//CUBE_B========================
-	gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-
-	//CUBE_C========================
-	gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-
-	//ETC_CUBES=====================
-	gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	//CUBE_A========================
+//	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+//
+//	//CUBE_B========================
+//	gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+//
+//	//CUBE_C========================
+//	gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+//
+//	//ETC_CUBES=====================
+//	gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+//	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
 	
 	glPushMatrix();
 	glTranslatef(-1.1,0,-4.4);
-	glRotatef(30,0,1,0);
+	glRotatef(rotation,0,1,0);
 	models[2].second->draw();
 	glPopMatrix();
 	
@@ -451,7 +413,7 @@ void onDisplay(){
 
 	//Sky================*/
 	gfxSkyBox();
-
+    glEnable(GL_TEXTURE_2D);
 	//Obj ground, seemed like fun.
 	glPushMatrix();
 	glTranslatef(0,-0.5,0);
@@ -553,7 +515,7 @@ void IdleFunc(void)
   }
   KeyboardIdle(ticks);
   lastTick = timeNow;
-  rSleep(ticks/10);
+//  rSleep(ticks/10);
   glutPostRedisplay();
 }
 

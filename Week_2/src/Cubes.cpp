@@ -52,33 +52,27 @@ Cube::Cube(const Cube &other){
 }
 
 Cube::~Cube(){
-	//Do a fancy remove dance.
-}
-
-void Cube::toggleRotation(){
-	isRotating = !isRotating;
+	//Implement fancy remove dance?
 }
 
 void Cube::draw(){
 	glPushMatrix();
 	rotation_current %= 360;
-	if(isRotating){
-		glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
-		switch(rotation_angle){
-		case NO_ROTATION:
-			break;
-		case X_AXIS_ROTATION:
-			glRotatef(rotation_current,1,0,0);
-			break;
-		case Y_AXIS_ROTATION:
-			glRotatef(rotation_current,0,1,0);
-			break;
-		case Z_AXIS_ROTATION:
-			glRotatef(rotation_current,0,0,1);
-			break;
-		}
-		glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
+	glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
+	switch(rotation_angle){
+	case NO_ROTATION:
+		break;
+	case X_AXIS_ROTATION:
+		glRotatef(rotation_current,1,0,0);
+		break;
+	case Y_AXIS_ROTATION:
+		glRotatef(rotation_current,0,1,0);
+		break;
+	case Z_AXIS_ROTATION:
+		glRotatef(rotation_current,0,0,1);
+		break;
 	}
+	glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
 	glColor3f(1, 1, 1);
 	cubes_texture.bindTexture();
 	//Texture coordinates assume terrain.png, though the texture image is variable

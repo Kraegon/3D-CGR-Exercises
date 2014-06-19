@@ -27,7 +27,6 @@ public:
 	Cube(const Cube&);
 	~Cube();
 
-	void toggleRotation();
 	void draw();
 };
 

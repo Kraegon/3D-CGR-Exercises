@@ -252,7 +252,8 @@ void IdleFunc(void)
   int timeNow = glutGet(GLUT_ELAPSED_TIME);
   double ticks = (timeNow - lastTick);
   for(Cube *c : cubes_getCubes()){
-    c->rotation_current += ticks/10;
+	if(c->isRotating)
+		c->rotation_current += ticks/10;
   }
   kb_idle(ticks);
   lastTick = timeNow;

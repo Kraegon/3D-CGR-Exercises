@@ -22,6 +22,7 @@
 bool kb_fullScreen = false;
 bool kb_specKeys[256]; //Looks at special keys
 bool kb_keys[256];     //Looks at regular keys
+bool kb_keysHeld[256];     //Looks at regular keys
 
 void kb_init(){
 	glutKeyboardFunc (kb_glutKeyboard);
@@ -85,37 +86,57 @@ void kb_idle(double const &ticks){
 	  cam_zoom(ticks);
   }
   if(kb_keys[6]){  //ctrl+f
-    if(kb_fullScreen){
-      glutReshapeWindow(800, 600);            // Restore to window
-      glutPositionWindow(0,0);
-      kb_fullScreen = !kb_fullScreen;
+    if(!kb_keysHeld[6]){
+		if(kb_fullScreen){
+		  glutReshapeWindow(800, 600);            // Restore to window
+		  glutPositionWindow(0,0);
+		  kb_fullScreen = !kb_fullScreen;
+		}
+		else
+		{
+		  glutFullScreen();                       // FullScreen glory
+		  kb_fullScreen = !kb_fullScreen;
+		}
     }
-    else
-    {
-      glutFullScreen();                       // FullScreen glory
-      kb_fullScreen = !kb_fullScreen;
-    }
+    kb_keysHeld[6] = true;
+  }else{
+	  kb_keysHeld[6] = false;
   }
   if(kb_keys['p']){ //p
-    for(Cube *c : cubes_getCubes()){
-    	c->isRotating = true;
-    }
+	  if(!kb_keysHeld['p']){
+		for(Cube *c : cubes_getCubes()){
+			c->isRotating = !c->isRotating;
+		}
+	  }
+    kb_keysHeld['p'] = true;
+  }else{
+	kb_keysHeld['p'] = false;
   }
   if(kb_keys['f']){
-	  float blockX,blockY,blockZ,blockRotation,blockSize;
-	  double radius = 1.4;
-	  cam_getIntrinsics(blockX,blockY,blockZ,blockRotation);
-	  blockSize = 1;
-	  blockX-=radius*(cos(AsRadian(blockRotation))-(0.5*blockSize)) + radius;
-	  blockY = -0.5f;
-	  blockZ-=radius*(sin(AsRadian(blockRotation))-(0.5*blockSize)) + radius;
-	  if(cubes_getCubes().size() < 500){
-		  srand(time(NULL));
-		  cubes_editCubes()->push_back(new Cube(blockX,blockY,blockZ,blockSize,rand()%4));
+	  if(!kb_keysHeld['f']){
+		  float blockX,blockY,blockZ,blockRotation,blockSize;
+		  double radius = 1.4;
+		  cam_getIntrinsics(blockX,blockY,blockZ,blockRotation);
+		  blockSize = 1;
+		  blockX-=radius*(cos(AsRadian(blockRotation))-(0.5*blockSize)) + radius;
+		  blockY = -0.5f;
+		  blockZ-=radius*(sin(AsRadian(blockRotation))-(0.5*blockSize)) + radius;
+		  if(cubes_getCubes().size() < 500){
+			  srand(time(NULL));
+			  cubes_editCubes()->push_back(new Cube(blockX,blockY,blockZ,blockSize,rand()%4));
+		  }
 	  }
+	  kb_keysHeld['f'] = true;
+  }else{
+	  kb_keysHeld['f'] = false;
   }
   if(kb_keys['c']){
-	  cubes_editCubes()->clear();
+	  if(!kb_keysHeld['c']){
+		  cubes_editCubes()->clear();
+	  }
+	  kb_keysHeld['c'] = true;
+  }else{
+	  kb_keysHeld['c'] = false;
   }
   if(kb_keys[27]){ //ESCAPE
     exit(0);

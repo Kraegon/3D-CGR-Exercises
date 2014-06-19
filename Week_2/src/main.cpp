@@ -44,17 +44,24 @@
 float rotation = 0.0f;                                  //Part of: cubes
 float eyeposVer = 1.2f; //In vertical plane: y          //Part of: camera
 float eyeposHor = 0.0f; //In horizontal plane: x and z  //Part of: camera
-float cameraCenterX = 0.0f;                             //Part of: camera
+float cameraCenterX = -2.0f;                             //Part of: camera
 float cameraCenterY = 0.0f;                             //Part of: camera
 float cameraCenterZ = 0.0f;                             //Part of: camera
+float cameraCenterHeight = 1.0f;                        //Part of: camera
 int lastTick = 0;                                       //Part of: refreshing
 bool specKeys[256]; //Looks at special keys             //Part of: keyboard
 bool keys[256];     //Looks at regular keys             //Part of: keyboard
-bool rotating = true;                                   //Part of: cubes
+bool rotating = false;                                  //Part of: cubes
 bool fullScreen = false;                                //Part of: keyboard?
 texture_loader texture1("terrain.png");
-texture_loader skyTex("sky.jpeg");
-
+texture_loader skyTex("Cosmos03.jpg");
+float xZubat = 0;
+float yZubat = 0;
+float zZubat = 0;
+float cZubat = 0;
+bool ZubatXLowering = true;
+bool ZubatYLowering = true;
+bool ZubatZLowering = true;
 std::vector<std::pair<int, ObjModel*> > models;
 int currentModel = 0;
 
@@ -77,21 +84,29 @@ void glutKeyboard(unsigned char, int, int);
 int main(int argc, char * argv[])
 {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(800, 600);
+	glutInitWindowSize(1600, 1000);
 	glutInit(&argc, argv);
 	glutCreateWindow("Hello Guus & Julian");
 	printf("Programme started!\n");
 	InitGraphics();
-		//Models 'borrowed' from Johan
+        ObjModel *chari = new ObjModel("models/Charizard/charizard.obj");
+        chari->scaleModel(100);
+        models.push_back(pair<int, ObjModel*>(130, chari));
 		ObjModel *terrain = new ObjModel("models/Mountain/mountain_link.obj");
-		terrain->scaleModel(25);
-		models.push_back(pair<int, ObjModel*>(1, terrain));
-		ObjModel *kirby = new ObjModel("models/Kirby/kirby.obj");
-		kirby->scaleModel(200);
-		models.push_back(pair<int, ObjModel*>(130, kirby));
-		ObjModel *dedede = new ObjModel("models/King_Dedede/kingdedede.obj");
-		dedede->scaleModel(200);
-		models.push_back(pair<int, ObjModel*>(130, dedede));
+		terrain->scaleModel(10);
+		models.push_back(pair<int, ObjModel*>(130, terrain));
+		ObjModel *zubat = new ObjModel("models/Zubat/zubat.obj");
+		zubat->scaleModel(200);
+		models.push_back(pair<int, ObjModel*>(130, zubat));
+        ObjModel *pica = new ObjModel("models/Pikachu/pikachu.obj");
+        pica->scaleModel(400);
+        models.push_back(pair<int, ObjModel*>(130, pica));
+        ObjModel *bulba = new ObjModel("models/Bulbasaur/bulbasaur.obj");
+        bulba->scaleModel(400);
+        models.push_back(pair<int, ObjModel*>(130, bulba));
+        ObjModel *squirtle = new ObjModel("models/Squirtle/squirtle.obj");
+        squirtle->scaleModel(400);
+        models.push_back(pair<int, ObjModel*>(130, squirtle));
 		//ObjModel *car = new ObjModel("models/car/honda_jazz.obj");
 		//car->scaleModel(75);
 		//models.push_back(pair<int, ObjModel*>(75, car));
@@ -131,7 +146,7 @@ void gfxSkyBox(){ //COPY PASTE COPY PASTE IT IS THE ONLY WAY
 	glEnable(GL_TEXTURE_2D);
 				glBegin(GL_QUADS);
 				glNormal3f(0.0f,0.0f,1.0f);
-				skyTex.getTexture(1.0, 0.062);
+				skyTex.getTexture(1.0, 0.5);
 				glVertex3f(posX,posY,posZ);
 				skyTex.getTexture(1.0, 0.000);
 				glVertex3f(posX,posY+size,posZ);
@@ -171,13 +186,13 @@ void gfxSkyBox(){ //COPY PASTE COPY PASTE IT IS THE ONLY WAY
 				glVertex3f(posX+size,posY+size,posZ);
 
 				glNormal3f(0.0f,1.0f,0.0f);
-				skyTex.getTexture(0.5, 0.062);
+				skyTex.getTexture(0.0, 1.0);
 				glVertex3f(posX,posY,posZ);
-				skyTex.getTexture(0.5, 0.000);
+				skyTex.getTexture(0.0, 0.0);
 				glVertex3f(posX,posY,posZ+size);
-				skyTex.getTexture(0.5, 0.000);
+				skyTex.getTexture(1.0, 1.000);
 				glVertex3f(posX+size,posY,posZ+size);
-				skyTex.getTexture(0.5, 1.0);
+				skyTex.getTexture(1.0, 0.0);
 				glVertex3f(posX+size,posY,posZ);
 
 				glNormal3f(0.0f,-1.0f,0.0f);
@@ -190,6 +205,7 @@ void gfxSkyBox(){ //COPY PASTE COPY PASTE IT IS THE ONLY WAY
 				skyTex.getTexture(0.000, 0.000);
 				glVertex3f(posX+size,posY+size,posZ);
 			glEnd();
+    skyTex.stashTexture();
 }
 
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int texture){
@@ -336,55 +352,67 @@ void onDisplay(){
 	gluLookAt(
 	//Eye
 	cameraCenterX + (eyeposVer*cos(AsRadian(eyeposHor))),
-	eyeposVer,
+	cameraCenterHeight,
 	cameraCenterZ + (eyeposVer*sin(AsRadian(eyeposHor))),
 	//Center
 	cameraCenterX,
 	cameraCenterY,
 	cameraCenterZ,
 	//Up
-	0,1,0
+	0,cameraCenterHeight,0
 	);
 
-	//ROOM==========================
-	//   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
-
-	//PLAYER==========================
-	//gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
 	//Loaded complex mesh object===
-	glPushMatrix();
-	glTranslatef(cameraCenterX, 0, cameraCenterZ);
-	glRotatef(-eyeposHor-90,0,1,0);
-	models[1].second->draw();
-	glPopMatrix();
+    if (rotation) {
+        glPushMatrix();
+        glTranslatef(cameraCenterX, 0.05, cameraCenterZ);
+        glRotatef(rotation,0,1,0);
+        models[0].second->draw();
+        glPopMatrix();
+    }
+    else
+    {
+        glPushMatrix();
+        glTranslatef(cameraCenterX, 0.05, cameraCenterZ);
+        glRotatef(-eyeposHor-90,0,1,0);
+        models[0].second->draw();
+        glPopMatrix();
+    }
 	//End of loaded object=========
-
-	//CUBE_A========================
-	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-
-//	//CUBE_B========================
-	gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-//
-//	//CUBE_C========================
-	gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-//
-//	//ETC_CUBES=====================
-	gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-	
+    //Load more complex mech objects :D
+    cZubat += 0.001;
+    xZubat = sin(cZubat)*20;
+    zZubat = cos(cZubat)*20;
 	glPushMatrix();
-	glTranslatef(-1.1,0,-4.4);
-	glRotatef(rotation,0,1,0);
+	glTranslatef(-1.1+xZubat,8+yZubat,-4.4+zZubat);
+	glRotatef(0,0,1,0);
 	models[2].second->draw();
 	glPopMatrix();
-	
+    
+	glPushMatrix();
+	glTranslatef(11.1-xZubat,8+yZubat,14.4-zZubat);
+	glRotatef(0,0,1,0);
+	models[2].second->draw();
+	glPopMatrix();
+
+    glPushMatrix();
+	glTranslatef(-3.1,0,-2.0);
+	glRotatef(rotation,0,1,0);
+	models[3].second->draw();
+	glPopMatrix();
+    
+    glPushMatrix();
+	glTranslatef(-2.1,0,-2.0);
+	glRotatef(rotation,0,1,0);
+	models[4].second->draw();
+	glPopMatrix();
+    
+    glPushMatrix();
+	glTranslatef(-1.1,0,-2.0);
+	glRotatef(rotation,0,1,0);
+	models[5].second->draw();
+	glPopMatrix();
+    
 	//THE_SUN!!=====================
 	glPushMatrix();
 	glTranslatef(0.75, 10.0, -1.0);
@@ -394,38 +422,17 @@ void onDisplay(){
 	glPopMatrix();
 	GLfloat sunpos[] = {0.75, 10.0, -1.0,1.0};
 	glLightfv(GL_LIGHT0, GL_POSITION, sunpos);
-	//SORRY, this is very hacky :(
 
-	/*Sky=======================
-	glPushMatrix();
-	glBegin(GL_QUADS);
-	glColor3f(0.0, 0.0, 0.0);
-
-	glVertex3f(-1000.0,-1.0,-1000.0);
-	glVertex3f(1000,-1.0,-1000.0);
-	glVertex3f(1000.0,-1.0,1000.0);
-	glVertex3f(-1000.0,-1.0,1000.0);
-	glColor3f(1.0, 1.0, 1.0);
-	glEnd();
-	glPopMatrix();
-
-	//Sky================*/
 	gfxSkyBox();
     glEnable(GL_TEXTURE_2D);
-	//Obj ground, seemed like fun.
+	//Obj ground, seemed like fun, and it is :D
 	glPushMatrix();
-	glTranslatef(0,-0.5,0);
-	models[0].second->draw();
+	glTranslatef(-2,-1.5,0);
+	models[1].second->draw();
 	glPopMatrix();
-
+    //More complex mech objects loaded
 	glLoadIdentity();
 	glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);
-	glBegin(GL_LINE_LOOP);
-	glVertex2f(5, 5);
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, 5);
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)-5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-	glVertex2f(5, glutGet(GLUT_WINDOW_HEIGHT)-5);
-	glEnd();
 
 	glutSwapBuffers();
 }
@@ -460,21 +467,107 @@ void KeyboardIdle(double const &ticks){
     if(cameraCenterY < -10)
       cameraCenterY = -10;
   }
+  if(keys[114]){
+    cameraCenterHeight += 0.1f; //Move up
+    if(cameraCenterHeight > 20)
+      cameraCenterHeight = 20;
+  }
+  if(keys[102]){
+    cameraCenterHeight -= 0.1f; //Move down
+    if(cameraCenterHeight < 1)
+      cameraCenterHeight = 1;
+  }
   if(keys[97]){ //a
+      float tempCameraCenterX = cameraCenterX;
+      float tempCameraCenterZ = cameraCenterZ;
 	  cameraCenterX -= factor * cos(AsRadian(eyeposHor - 90));       // Move left
 	  cameraCenterZ -= factor * sin(AsRadian(eyeposHor - 90));
+      if (cameraCenterX > -1.3)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterX < -3.1)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterZ > 1)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
+      if (cameraCenterZ < -14.6)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
+  }
+  if(keys[121]){ //y
+      std::cout << "YOur location (format x y) : " << cameraCenterX << " " << cameraCenterZ << std::endl;
   }
   if(keys[100]){ //d
+      float tempCameraCenterX = cameraCenterX;
+      float tempCameraCenterZ = cameraCenterZ;
 	  cameraCenterX -= factor * cos(AsRadian(eyeposHor + 90));       // Move right
 	  cameraCenterZ -= factor * sin(AsRadian(eyeposHor + 90));
+      if (cameraCenterX > -1.3)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterX < -3.1)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterZ > 1)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
+      if (cameraCenterZ < -14.6)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
+
   }
   if(keys[119]){ //w
+      float tempCameraCenterX = cameraCenterX;
+      float tempCameraCenterZ = cameraCenterZ;
     cameraCenterX -= factor * cos(AsRadian(eyeposHor));       // Move forward
     cameraCenterZ -= factor * sin(AsRadian(eyeposHor));
+      if (cameraCenterX > -1.3)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterX < -3.1)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterZ > 1)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
+      if (cameraCenterZ < -14.6)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
   }
   if(keys[115]){ //s
+      float tempCameraCenterX = cameraCenterX;
+      float tempCameraCenterZ = cameraCenterZ;
     cameraCenterX += factor * cos(AsRadian(eyeposHor));       // Move backwards
     cameraCenterZ += factor * sin(AsRadian(eyeposHor));
+      if (cameraCenterX > -1.3)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterX < -3.1)
+      {
+          cameraCenterX = tempCameraCenterX;
+      }
+      if (cameraCenterZ > 1)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
+      if (cameraCenterZ < -14.6)
+      {
+          cameraCenterZ = tempCameraCenterZ;
+      }
   }
   if(keys[113]){ //q
     eyeposVer+=ticks/100; //Zoom out
@@ -497,8 +590,11 @@ void KeyboardIdle(double const &ticks){
     }
   }
   if(keys[112]){ //p
-    rotating = !rotating;
-  }  
+    rotating = false;
+  }
+  if(keys[111]){ //o
+    rotating = true;
+  }
   if(keys[27]){ //ESCAPE
     exit(0);
   }
@@ -516,4 +612,23 @@ void IdleFunc(void)
 //  rSleep(ticks/10);
   glutPostRedisplay();
 }
+
+//England - World Cup 2014
+//When you walk through the storm
+//Hold your head up high
+//And don't be afraid of the dark
+//At the end of the storm
+//There's a golden sky
+//And the sweet silver song of the lark
+//
+//Walk on, through the wind
+//Walk on, through the rain
+//Though your dreams be tossed and blown
+//Walk on, walk on, with hope in your heart
+//And you'll never walk alone
+//You'll never walk alone
+//
+//Walk on, walk on, with hope in your heart
+//And you'll never walk alone
+//You'll never walk alone
 

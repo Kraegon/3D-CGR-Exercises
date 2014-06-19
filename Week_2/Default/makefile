@@ -15,6 +15,7 @@ RM := rm
 -include models/car/subdir.mk
 -include models/bloemetje/subdir.mk
 -include models/baksteen/subdir.mk
+-include models/Kirby/subdir.mk
 -include subdir.mk
 -include objects.mk
 

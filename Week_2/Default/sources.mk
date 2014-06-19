@@ -30,4 +30,5 @@ models/cube \
 models/car \
 models/bloemetje \
 models/baksteen \
+models/Kirby \
 

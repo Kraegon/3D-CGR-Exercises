@@ -52,8 +52,8 @@ bool specKeys[256]; //Looks at special keys             //Part of: keyboard
 bool keys[256];     //Looks at regular keys             //Part of: keyboard
 bool rotating = true;                                   //Part of: cubes
 bool fullScreen = false;                                //Part of: keyboard?
-std::string terrain = "terrain.png";
-texture_loader texture1(terrain);
+texture_loader texture1("terrain.png");
+texture_loader skyTex("sky.jpeg");
 
 std::vector<std::pair<int, ObjModel*> > models;
 int currentModel = 0;
@@ -82,10 +82,21 @@ int main(int argc, char * argv[])
 	printf("Programme started!\n");
 	InitGraphics();
 		//Models 'borrowed' from Johan
-		//models.push_back(pair<int, ObjModel*>(75, new ObjModel("models/car/honda_jazz.obj")));	//Too large!
-		models.push_back(std::pair<int, ObjModel*>(1, new ObjModel("models/bloemetje/PrimroseP.obj")));
+		ObjModel *terrain = new ObjModel("models/Mountain/mountain_link.obj");
+		terrain->scaleModel(25);
+		models.push_back(pair<int, ObjModel*>(1, terrain));
+		ObjModel *kirby = new ObjModel("models/Kirby/kirby.obj");
+		kirby->scaleModel(200);
+		models.push_back(pair<int, ObjModel*>(130, kirby));
+		ObjModel *dedede = new ObjModel("models/King_Dedede/kingdedede.obj");
+		dedede->scaleModel(200);
+		models.push_back(pair<int, ObjModel*>(130, dedede));
+		//ObjModel *car = new ObjModel("models/car/honda_jazz.obj");
+		//car->scaleModel(75);
+		//models.push_back(pair<int, ObjModel*>(75, car));
+		//models.push_back(std::pair<int, ObjModel*>(1, new ObjModel("models/bloemetje/PrimroseP.obj")));
 		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/cube/cube-textures.obj")));
-		//models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));	//Too large!
+		//models.push_back(pair<int, ObjModel*>(35, new ObjModel("models/ship/shipA_OBJ.obj")));
 		//models.push_back(pair<int, ObjModel*>(1, new ObjModel("models/normalstuff/normaltest2.obj")));
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
@@ -97,20 +108,89 @@ int main(int argc, char * argv[])
 	glutSpecialUpFunc (glutSpecialUp);
 	glutIdleFunc (IdleFunc);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-    glEnable(GL_FOG);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
+    /*glEnable(GL_FOG);
     float FogCol[3]={1.0f,1.0f,1.0f};
 	glFogfv(GL_FOG_COLOR,FogCol);
     glFogi(GL_FOG_MODE, GL_LINEAR);
     glFogf(GL_FOG_START, 7.f);
-	glFogf(GL_FOG_END, 15.f);
-	texture1.initTexture();
+	glFogf(GL_FOG_END, 15.f);*/
+
 	glutMainLoop();
 }
 
+void gfxSkyBox(){ //COPY PASTE COPY PASTE IT IS THE ONLY WAY
+	float posX = -125, posY=-125, posZ=-125, size = 250;
+    skyTex.initTexture();
+  	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+				glBegin(GL_QUADS);
+				glNormal3f(0.0f,0.0f,1.0f);
+				texture1.getTexture(1.0, 0.062);
+				glVertex3f(posX,posY,posZ);
+				texture1.getTexture(1.0, 0.000);
+				glVertex3f(posX,posY+size,posZ);
+				texture1.getTexture(0.5, 0.000);
+				glVertex3f(posX+size,posY+size,posZ);
+				texture1.getTexture(0.5, 1.0);
+				glVertex3f(posX+size,posY,posZ);
+
+				glNormal3f(0.0f,0.0f,-1.0f);
+				texture1.getTexture(0.5, 1.0);
+				glVertex3f(posX,posY,posZ+size);
+				texture1.getTexture(0.5, 0.000);
+				glVertex3f(posX,posY+size,posZ+size);
+				texture1.getTexture(1.0, 0.000);
+				glVertex3f(posX+size,posY+size,posZ+size);
+				texture1.getTexture(1.0, 1.0);
+				glVertex3f(posX+size,posY,posZ+size);
+
+				glNormal3f(1.0f,0.0f,0.0f);
+				texture1.getTexture(0.5, 1.0);
+				glVertex3f(posX,posY,posZ);
+				texture1.getTexture(1.0, 1.0);
+				glVertex3f(posX,posY,posZ+size);
+				texture1.getTexture(1.0, 0.000);
+				glVertex3f(posX,posY+size,posZ+size);
+				texture1.getTexture(0.5, 0.000);
+				glVertex3f(posX,posY+size,posZ);
+
+				glNormal3f(-1.0f,0.0f,0.0f);
+				texture1.getTexture(1.0, 1.0);
+				glVertex3f(posX+size,posY,posZ);
+				texture1.getTexture(0.5, 1.0);
+				glVertex3f(posX+size,posY,posZ+size);
+				texture1.getTexture(0.5, 0.000);
+				glVertex3f(posX+size,posY+size,posZ+size);
+				texture1.getTexture(1.0, 0.000);
+				glVertex3f(posX+size,posY+size,posZ);
+
+				glNormal3f(0.0f,1.0f,0.0f);
+				texture1.getTexture(0.5, 0.062);
+				glVertex3f(posX,posY,posZ);
+				texture1.getTexture(0.5, 0.000);
+				glVertex3f(posX,posY,posZ+size);
+				texture1.getTexture(0.5, 0.000);
+				glVertex3f(posX+size,posY,posZ+size);
+				texture1.getTexture(0.5, 1.0);
+				glVertex3f(posX+size,posY,posZ);
+
+				glNormal3f(0.0f,-1.0f,0.0f);
+				texture1.getTexture(0.000, 1.0);
+				glVertex3f(posX,posY+size,posZ);
+				texture1.getTexture(1.0, 1.0);
+				glVertex3f(posX,posY+size,posZ+size);
+				texture1.getTexture(1.0, 0.000);
+				glVertex3f(posX+size,posY+size,posZ+size);
+				texture1.getTexture(0.000, 0.000);
+				glVertex3f(posX+size,posY+size,posZ);
+			glEnd();
+}
+
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int texture){
+  texture1.initTexture();
   glPushMatrix();
     glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
     switch(angle){
@@ -310,7 +390,14 @@ void onDisplay(){
 	//   gfxDrawCube(-30.5, -1.5, -30.5, 100, NO_ROTATION,NO_TEXTURE);
 
 	//PLAYER==========================
-	gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
+	//gfxDrawCube(cameraCenterX-0.25, -0.5, cameraCenterZ-0.25, 0.5, FOLLOW_CAM,DEFAULT_TEXTURE);
+	//Loaded complex mesh object===
+	glPushMatrix();
+	glTranslatef(cameraCenterX, 0, cameraCenterZ);
+	glRotatef(-eyeposHor-90,0,1,0);
+	models[1].second->draw();
+	glPopMatrix();
+	//End of loaded object=========
 
 	//CUBE_A========================
 	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
@@ -332,7 +419,11 @@ void onDisplay(){
 	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
 	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
 	
-	
+	glPushMatrix();
+	glTranslatef(-1.1,0,-4.4);
+	glRotatef(30,0,1,0);
+	models[2].second->draw();
+	glPopMatrix();
 	
 	//THE_SUN!!=====================
 	glPushMatrix();
@@ -345,10 +436,11 @@ void onDisplay(){
 	glLightfv(GL_LIGHT0, GL_POSITION, sunpos);
 	//SORRY, this is very hacky :(
 
-	//Ground=======================
+	/*Sky=======================
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glColor3f(0.0, 0.0, 0.0);
+
 	glVertex3f(-1000.0,-1.0,-1000.0);
 	glVertex3f(1000,-1.0,-1000.0);
 	glVertex3f(1000.0,-1.0,1000.0);
@@ -356,14 +448,15 @@ void onDisplay(){
 	glColor3f(1.0, 1.0, 1.0);
 	glEnd();
 	glPopMatrix();
-	//End of Ground================
 
-	//Loaded complex mesh object===
+	//Sky================*/
+	gfxSkyBox();
+
+	//Obj ground, seemed like fun.
 	glPushMatrix();
-	glTranslatef(5,0,5);
-	models[currentModel].second->draw();
+	glTranslatef(0,-0.5,0);
+	models[0].second->draw();
 	glPopMatrix();
-	//End of loaded object=========
 
 	glLoadIdentity();
 	glOrtho(0,glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT), -1, 200);

@@ -196,17 +196,30 @@ void ObjModel::draw()
 {
 	for(ObjGroup *group: groups){
 		//Set material, probably glMaterial or something
-		//if(material.hasTexture)
-		//glEnable(GL_TEXTURE_2D);
+		if(materials[group->materialIndex]->hasTexture){
+			materials[group->materialIndex]->texture.initTexture();
+		}
 		glBegin(GL_TRIANGLES);
 		for(Face f : group->faces){
 			for(std::list<Vertex>::iterator it = f.vertices.begin(); it != f.vertices.end(); ++it){
-				glTexCoord2f(texcoords[it->texcoord].x, texcoords[it->texcoord].y);
 				glNormal3f(normals[it->normal].x, normals[it->normal].y, normals[it->normal].z);
+				glTexCoord2f(texcoords[it->texcoord].x, texcoords[it->texcoord].y);
 				glVertex3f(vertices[it->position].x, vertices[it->position].y, vertices[it->position].z);
 			}
 		}
 		glEnd();
+		if(materials[group->materialIndex]->hasTexture){
+			materials[group->materialIndex]->texture.stashTexture();
+		}
+	}
+}
+
+void ObjModel::scaleModel(double factor)
+{
+	for(std::vector<Vec3f>::iterator it = vertices.begin(); it != vertices.end(); ++it){
+		it->x*=(1/factor);
+		it->y*=(1/factor);
+		it->z*=(1/factor);
 	}
 }
 
@@ -257,7 +270,9 @@ void ObjModel::loadMaterialFile( std::string fileName, std::string dirName )
 		{
 			currentMaterial->hasTexture = true;
 			std::string texPath = dirName + "/" + params[1];
-			currentMaterial->texture = texture_loader(texPath.c_str());
+			texPath = replace(texPath, "\\", "/");
+			trimR(texPath);
+			currentMaterial->texture = texture_loader(texPath);
 		}
 		else
 			std::cout<<"Didn't parse "<<params[0]<<" in material file"<<std::endl;

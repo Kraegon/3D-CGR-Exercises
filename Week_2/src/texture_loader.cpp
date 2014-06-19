@@ -25,7 +25,7 @@ texture_loader::texture_loader(std::string fileName)
 }
 texture_loader::texture_loader()
 {
-	texturePath = ""; //Call should be avoided by texture == false in obj
+texturePath = ""; //Call should be avoided by texture == false in obj
 }
 
 void texture_loader::initTexture(void)
@@ -34,18 +34,18 @@ void texture_loader::initTexture(void)
     glBindTexture(GL_TEXTURE_2D, textureId);
     unsigned char* imgData = stbi_load(texturePath.c_str(), &width, &height, &bpp, 4);
     glTexImage2D(	GL_TEXTURE_2D,
-                 0,		//level
-                 GL_RGBA,		//internal format
-                 width,		//width
-                 height,		//height
-                 0,		//border
-                 GL_RGBA,		//data format
+                 0,	//level
+                 GL_RGBA,	//internal format
+                 width,	//width
+                 height,	//height
+                 0,	//border
+                 GL_RGBA,	//data format
                  GL_UNSIGNED_BYTE,	//data type
-                 imgData);		//data
+                 imgData);	//data
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     stbi_image_free(imgData);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    //glBindTexture(GL_TEXTURE_2D, textureId);
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -61,5 +61,3 @@ void texture_loader::stashTexture(void)
 {
     glDisable(GL_TEXTURE_2D);
 }
-
-

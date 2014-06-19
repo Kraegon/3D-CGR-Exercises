@@ -94,5 +94,6 @@ public:
 	~ObjModel(void);
 
 	void draw();
+	void scaleModel(double);
 };
 

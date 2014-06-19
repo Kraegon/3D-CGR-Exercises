@@ -193,7 +193,6 @@ void gfxSkyBox(){ //COPY PASTE COPY PASTE IT IS THE ONLY WAY
 }
 
 void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int texture){
-  texture1.bindTexture();
   glPushMatrix();
     glTranslatef((size/2)+posX,(size/2)+posY,(size/2)+posZ);
     switch(angle){
@@ -210,9 +209,10 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
       glRotatef(-eyeposHor,0,1,0);
         break;
     }
-  glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
+    glTranslatef(-(size/2)-posX,-(size/2)-posY,-(size/2)-posZ);
 	if (texture == DEFAULT_TEXTURE) {
-			glColor3f(1, 1, 1);
+		glColor3f(1, 1, 1);
+		texture1.bindTexture();
 		glEnable(GL_TEXTURE_2D);
 			glBegin(GL_QUADS);
 			glNormal3f(0.0f,0.0f,-1.0f);
@@ -275,11 +275,9 @@ void gfxDrawCube(float posX, float posY, float posZ, float size, int angle, int 
 			texture1.getTexture(0.000, 0.000);
 			glVertex3f(posX+size,posY+size,posZ);
 		glEnd();
-		texture1.stashTexture();
-
+		//texture1.stashTexture();
 	}
-	
-	  glPopMatrix();
+	glPopMatrix();
 }
 
 void Display(void)
@@ -361,25 +359,25 @@ void onDisplay(){
 	glPopMatrix();
 	//End of loaded object=========
 
-//	//CUBE_A========================
-//	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-//
+	//CUBE_A========================
+	gfxDrawCube(-2.5,-0.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-2.5,2.5,-0.5,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+
 //	//CUBE_B========================
-//	gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-0.5,-0.5,-0.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
 //
 //	//CUBE_C========================
-//	gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(1.5,-0.5,-0.5,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
 //
 //	//ETC_CUBES=====================
-//	gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
-//	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-4,-0.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(6,-0.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(7,-0.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-8,-0.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-4,3.5,-6.5,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(6,3.5,-7,1,Z_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(7,3.5,4,1,X_AXIS_ROTATION,DEFAULT_TEXTURE);
+	gfxDrawCube(-8,3.5,-4,1,Y_AXIS_ROTATION,DEFAULT_TEXTURE);
 	
 	glPushMatrix();
 	glTranslatef(-1.1,0,-4.4);

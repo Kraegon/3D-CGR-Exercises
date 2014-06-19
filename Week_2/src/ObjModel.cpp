@@ -192,8 +192,11 @@ ObjModel::~ObjModel(void)
 
 
 
-void ObjModel::draw()
+void ObjModel::draw(const Vec3f &position, const Vec3f &rotationAngle, const float &rotation)
 {
+	glPushMatrix();
+	glTranslatef(position.x,position.y,position.z);
+	glRotatef(rotation,rotationAngle.x,rotationAngle.y,rotationAngle.z);
 	for(ObjGroup *group: groups){
 		//Set material, probably glMaterial or something
 		if(materials[group->materialIndex]->hasTexture){
@@ -212,8 +215,8 @@ void ObjModel::draw()
 			}
 		}
 		glEnd();
-
 	}
+	glPopMatrix();
 }
 
 void ObjModel::scaleModel(double factor)

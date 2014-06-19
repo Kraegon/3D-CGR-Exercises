@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #else
-#include <unistd.h> //Test compatibility of unistd.h's sleep with Apple systems
+#include <unistd.h>
 #endif
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -25,7 +25,7 @@ texture_loader::texture_loader(std::string fileName)
 }
 texture_loader::texture_loader(void)
 {
-texturePath = ""; //Call should be avoided by texture == false in obj
+texturePath = "";
 }
 
 void texture_loader::initTexture(void)

@@ -93,7 +93,7 @@ public:
 	ObjModel(std::string filename);
 	~ObjModel(void);
 
-	void draw();
+	void draw(const Vec3f&, const Vec3f&, const float&);
 	void scaleModel(double);
 };
 

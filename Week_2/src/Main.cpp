@@ -20,7 +20,6 @@
 #error "Your OS cannot compile this program!"
 #endif
 
-#include <iostream>
 #include "../include/texture_loader.h"
 #include "../include/ObjModel.h"
 #include "../include/Keyboard.h"
@@ -28,34 +27,23 @@
 #include "../include/Cubes.h"
 
 int lastTick = 0;
-texture_loader skyTex("sky.jpeg");   //Should be moved to Skybox file
 
+texture_loader skyTex("sky.jpeg");   //Should be moved to Skybox file
 std::vector<ObjModel*> models;
 
 void Display(void);
 void Reshape(GLint, GLint);
-void InitGraphics(void);
-void MouseButton(int, int, int, int);
-void MouseMotion(int, int);
-//void Keyboard(unsigned char, int, int);
 void onDisplay();
 void rSleep(int);
 void IdleFunc(void);
-void initCubes();
 
 int main(int argc, char * argv[])
 {
-	std::cout<<"Control scheme:"<<std::endl;
-	std::cout<<"W forward"<<std::endl;
-	std::cout<<"A strafe left"<<std::endl;
-	std::cout<<"S backwards"<<std::endl;
-	std::cout<<"D strage right"<<std::endl;
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
 	glutInit(&argc, argv);
 	glutCreateWindow("Project Finale");
 	printf("Programme started!\n");
-	InitGraphics();
 	kb_init();
 	cubes_initCubes(); //Load cube models into cube vector
 		//Models 'borrowed' from models-resource.com
@@ -68,6 +56,7 @@ int main(int argc, char * argv[])
 		ObjModel *dedede = new ObjModel("models/King_Dedede/kingdedede.obj");
 		dedede->scaleModel(200);
 		models.push_back(dedede);
+		/*
 		ObjModel *ice_cream = new ObjModel("models/Food/Ice_Cream/TopL.obj");
 		ice_cream->scaleModel(1);
 		models.push_back(ice_cream);
@@ -79,9 +68,11 @@ int main(int argc, char * argv[])
 		//models.push_back(new ObjModel("models/cube/cube-textures.obj"));
 		//models.push_back(new ObjModel("models/ship/shipA_OBJ.obj")); scale me(35)
 		//models.push_back(new ObjModel("models/normalstuff/normaltest2.obj"));
+		 /**/
 	glutDisplayFunc (onDisplay);
 	glutReshapeFunc (Reshape);
 	glutIdleFunc (IdleFunc);
+	glEnable(GL_DEPTH_TEST);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -182,7 +173,7 @@ void Reshape(GLint width, GLint height)
 
 void InitGraphics(void)
 {
-  glEnable(GL_DEPTH_TEST);
+
 }
 
 void MouseButton(int button, int state, int x, int y)
